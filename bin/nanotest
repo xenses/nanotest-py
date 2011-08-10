@@ -4,45 +4,55 @@ import os
 import subprocess
 import sys
 
-testfiles = 0
 tests_run = 0
 tests_passed = 0
+pythonpath = []
+testfiles  = []
+
+def test_script_fail_abort(f, results):
+    print(results[1])
+    print("nt> ABORT: Test script {} ended with nonzero status ({}); aborting test run".format(f, results[0]))
+    sys.exit(1)
 
 # walk pwd tree
+print("nt> Searching for modules and tests")
 for root, dirs, files in os.walk("."):
-    # we only care about directories named "tests"
-    if root[-6:] != "/tests":
-        continue
-    print("nt> Found directory {}".format(root))
     for f in files:
-        # we also only care about files named *.t
-        if f[-2:] != ".t":
-            continue
-        testfiles = testfiles + 1
-        # run test as subprocess
-        results = subprocess.getstatusoutput("PYTHONPATH=\"./\" /usr/bin/env python {}".format(os.path.join(root,f)))
-        # abort if the test script as a whole failed
-        if results[0] != 0:
-            test_script_fail_abort(f, results)
-        # script was ok. pull test counts off results
-        reslist = results[1].split("\n")
-        trun, tpass = reslist[-1].split();
-        reslist.pop()
-        # print errors, if any
-        if len(reslist) > 0:
-            print("nt>    {}: output".format(f)) 
-            print("\n".join(reslist))
-        # print script summary and add to totals
-        if trun == tpass:
-            print("nt>    {}: Success: {} of {} passing".format(f, tpass, trun))
-        else:
-            print("nt>    {}: FAIL: {} of {} passing".format(f, tpass, trun))
-        tests_run += int(trun)
-        tests_passed += int(tpass)
+        if f[-3:] == ".py":
+            if root[-6:] == "/tests":
+                testfiles.append(os.path.join(root,f))
+            else:
+                pythonpath.append(os.path.join(root,f))
 
-if testfiles > 0:
+# build the PYTHONPATH value
+pypathstr = ":".join(pythonpath)
+
+# run each test found
+for test in testfiles:
+    print("nt>    Running {}".format(test)) 
+    results = subprocess.getstatusoutput("PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
+    # abort if the test script as a whole failed
+    if results[0] != 0:
+        test_script_fail_abort(test, results)
+    # script was ok. pull test counts off results
+    reslist = results[1].split("\n")
+    trun, tpass = reslist[-1].split();
+    reslist.pop()
+    # print errors, if any
+    if len(reslist) > 0:
+        print("nt>    {} output".format(test)) 
+        print("\n".join(reslist))
+    # print script summary and add to totals
+    if trun == tpass:
+        print("nt>    {}: Success: {} of {} passing".format(test, tpass, trun))
+    else:
+        print("nt>    {}: FAIL: {} of {} passing".format(test, tpass, trun))
+    tests_run += int(trun)
+    tests_passed += int(tpass)
+
+if len(testfiles) > 0:
     print("nt> End of run")
-    print("nt>    Test scripts seen: {}".format(testfiles))
+    print("nt>    Test scripts seen: {}".format(len(testfiles)))
     print("nt>    Tests run:         {}".format(tests_run))
     print("nt>    Tests passing:     {}".format(tests_passed))
     if tests_run == tests_passed:
@@ -51,8 +61,3 @@ if testfiles > 0:
         print("nt> >>FAIL<<")
 else:
     print("nt> No test scripts found in pwd tree. Nothing to do.")
-
-def test_script_fail_abort(f, results):
-    print(results[1])
-    print("nt> ABORT: Test script {} ended with nonzero status ({}); aborting test run".format(f, results[0]))
-    sys.exit(1)

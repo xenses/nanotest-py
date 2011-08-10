@@ -8,8 +8,8 @@ below the current directory, runs them, reports their individual
 findings, then issues a summary for the entire test suite.
 
 Test scripts must live in a directory named 'tests', and they must
-have the extension '.t'. Other than these naming constraints, scripts
-are simply Python programs and may be written however you please.
+have the extension '.py'. Scripts are simply Python programs and may
+be written however you please.
 
 This module is used by doing
 
@@ -32,8 +32,7 @@ def _is_core(expr, given):
 def pis(expr, given, msg):
     """Test for equivalence.
 
-pis() is oddly named because 'is' (what this routine would normally be
-called) is a keyword in Python.
+pis() should be named is(), but 'is' is a keyword in Python.
 
 Takes 3 arguments: an experimental value, a given value, and a
 message. The first two can be any valid Python expression; the third
@@ -52,10 +51,10 @@ failure and the message will be printed to STDOUT.
 def pisnt(expr, given, msg):
     """Test for difference.
 
-pisnt() is oddly named so that it will match pis().
+pisnt() is named so that it will match pis().
 
-pisnt() is works exactly like pis(), but backwards: tests succeed if
-the experimental and the given values are NOT equivalent."""
+Works exactly like pis(), but backwards: tests succeed if the
+experimental and the given values are NOT equivalent."""
     global nanotest_pass
     if not _is_core(expr, given):
         nanotest_pass = nanotest_pass + 1

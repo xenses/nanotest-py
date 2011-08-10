@@ -1,4 +1,12 @@
 nanotest-py Changelog
 
+1.0.1     09 Aug 2011
+
+          Test scripts are now .py, not .t
+
+          bin/nanotest now self-discovers modules and adds them to
+          PYTHONPATH for its test invocations.
+
 1.0.0     08 Aug 2011
+
           Initial release
