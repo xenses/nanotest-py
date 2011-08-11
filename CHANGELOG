@@ -1,5 +1,9 @@
 nanotest-py Changelog
 
+1.0.2     10 Aug 2011
+
+          Always include './' in PYTHONPATH
+
 1.0.1     09 Aug 2011
 
           Test scripts are now .py, not .t

@@ -6,7 +6,7 @@ import sys
 
 tests_run = 0
 tests_passed = 0
-pythonpath = []
+pythonpath = ['./']
 testfiles  = []
 
 def test_script_fail_abort(f, results):
