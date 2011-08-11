@@ -19,3 +19,5 @@ Installation is standard:
 See `pydoc nanotest` for details on use and how to write test scripts.
 
 Comments/questions/bugs to <shawn@firepear.net>
+
+*Don't complain that testing is too hard! Use nanotest and get to work!*
