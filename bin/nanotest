@@ -16,7 +16,7 @@ def test_script_fail_abort(f, results):
     sys.exit(1)
 
 # walk pwd tree
-print("Searching for modules and tests")
+print("Begin run: searching for modules and tests.")
 for root, dirs, files in os.walk("."):
     for f in files:
         if f[-3:] == ".py":
@@ -30,7 +30,7 @@ pypathstr = ":".join(pythonpath)
 
 # run each test found
 for test in testfiles:
-    print("   Running {}...".format(test), end='') 
+    print("   Running {} - ".format(test), end='') 
     results = subprocess.getstatusoutput("PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
     # abort if the test script as a whole failed
     if results[0] != 0:
@@ -63,4 +63,4 @@ if len(testfiles) > 0:
     else:
         print("Success")
 else:
-    print("No test scripts found in pwd tree. Nothing to do.")
+    print("No tests found; nothing to do.")
