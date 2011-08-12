@@ -66,8 +66,8 @@ def test_print_fail_msg(expr, given, msg, invert):
     if invert:
         print("Expected anything but '{}' and got it anyway".format(given))
     else:
-        print("  Expected: '{}'".format(given))
-        print("  Got     : '{}'".format(expr))
+        print("   Expected: '{}'".format(given))
+        print("   Got     : '{}'".format(expr))
 
 def test_print_summary():
     """Utility function which prints the number of tests run and
