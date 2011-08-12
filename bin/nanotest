@@ -54,11 +54,10 @@ for test in testfiles:
 
 if len(testfiles) > 0:
     print("End of run")
-    print("   Tests run:     {} in {} scripts".format(tests_run, len(testfiles)))
-    print("   Tests passing: {}".format(tests_passed))
+    print("   Tests passing: {}/{}, in {} script(s)".format(tests_passed, tests_run, len(testfiles)))
     tests_failed = tests_run - tests_passed
     if tests_failed > 0:
-        print("   Tests failing: {} in {} scripts".format(tests_failed, failfiles))
+        print("   Tests failing:   {}, in {} script(s)".format(tests_failed, failfiles))
         print(">>FAIL<<")
     else:
         print("Success")
