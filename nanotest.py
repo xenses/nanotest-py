@@ -62,12 +62,12 @@ experimental and the given values are NOT equivalent."""
         test_print_fail_msg(test, given, msg, True)
     
 def test_print_fail_msg(expr, given, msg, invert):
-    print("Test {} FAILED: {}".format(nanotest_run, msg))
+    print("FAILED test {}: {}".format(nanotest_run, msg))
     if invert:
-        print("Expected anything but {} and got it anyway".format(given))
+        print("Expected anything but '{}' and got it anyway".format(given))
     else:
-        print("  Expected: {}".format(given))
-        print("  Got     : {}".format(expr))
+        print("   Expected: '{}'".format(given))
+        print("   Got     : '{}'".format(expr))
 
 def test_print_summary():
     """Utility function which prints the number of tests run and

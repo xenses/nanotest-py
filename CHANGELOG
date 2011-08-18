@@ -1,5 +1,9 @@
 nanotest-py Changelog
 
+1.0.3     12 Aug 2011
+
+          Output formatting improvements
+
 1.0.2     10 Aug 2011
 
           Always include './' in PYTHONPATH

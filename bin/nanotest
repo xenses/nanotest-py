@@ -4,18 +4,19 @@ import os
 import subprocess
 import sys
 
-tests_run = 0
+tests_run    = 0
 tests_passed = 0
 pythonpath = ['./']
 testfiles  = []
+failfiles  = 0
 
 def test_script_fail_abort(f, results):
     print(results[1])
-    print("nt> ABORT: Test script {} ended with nonzero status ({}); aborting test run".format(f, results[0]))
+    print(">>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
     sys.exit(1)
 
 # walk pwd tree
-print("nt> Searching for modules and tests")
+print("Begin run: searching for modules and tests.")
 for root, dirs, files in os.walk("."):
     for f in files:
         if f[-3:] == ".py":
@@ -29,7 +30,7 @@ pypathstr = ":".join(pythonpath)
 
 # run each test found
 for test in testfiles:
-    print("nt>    Running {}".format(test)) 
+    print("   Running {} - ".format(test), end='') 
     results = subprocess.getstatusoutput("PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
     # abort if the test script as a whole failed
     if results[0] != 0:
@@ -38,26 +39,27 @@ for test in testfiles:
     reslist = results[1].split("\n")
     trun, tpass = reslist[-1].split();
     reslist.pop()
+    # tell about success or failure
+    if trun == tpass:
+        print("{}/{} passing; ok".format(tpass, trun))
+    else:
+        print("{}/{} passing; FAIL".format(tpass, trun))
+        failfiles += 1
     # print errors, if any
     if len(reslist) > 0:
-        print("nt>    {} output".format(test)) 
-        print("\n".join(reslist))
+        print("\n".join(["      " + line for line in reslist]))
     # print script summary and add to totals
-    if trun == tpass:
-        print("nt>    {}: Success: {} of {} passing".format(test, tpass, trun))
-    else:
-        print("nt>    {}: FAIL: {} of {} passing".format(test, tpass, trun))
     tests_run += int(trun)
     tests_passed += int(tpass)
 
 if len(testfiles) > 0:
-    print("nt> End of run")
-    print("nt>    Test scripts seen: {}".format(len(testfiles)))
-    print("nt>    Tests run:         {}".format(tests_run))
-    print("nt>    Tests passing:     {}".format(tests_passed))
-    if tests_run == tests_passed:
-        print("nt> Success")
+    print("End of run")
+    print("   Tests passing: {}/{}, in {} script(s)".format(tests_passed, tests_run, len(testfiles)))
+    tests_failed = tests_run - tests_passed
+    if tests_failed > 0:
+        print("   Tests failing:   {}, in {} script(s)".format(tests_failed, failfiles))
+        print(">>FAIL<<")
     else:
-        print("nt> >>FAIL<<")
+        print("Success")
 else:
-    print("nt> No test scripts found in pwd tree. Nothing to do.")
+    print("No tests found; nothing to do.")
