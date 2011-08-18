@@ -4,6 +4,14 @@ nanotest-py
 A reimplementation of `nanotest.js` from my Javascript library, which
 is itself a tiny, fragmentary implementation of Perl's `Test::More`.
 
+----
+
+Development HEAD is not guaranteed to be complete, or even in working
+order. Stick to tagged releases (downloadable at Github) if you are
+not comfortable with this.
+
+----
+
 This package includes `nanotest.py`, which is the test library proper,
 and `nanotest`, a script which acts as the test harness/runner.
 
