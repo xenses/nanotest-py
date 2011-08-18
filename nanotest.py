@@ -15,12 +15,13 @@ This module is used by doing
 
     from nanotest import *
 
-in each test script. Three functions will be exported into your
-namespace: two for testing and one for reporting. They are detailed
+in each test script. Four functions will be exported into your
+namespace: three for testing and one for reporting. They are detailed
 below."""
 
 nanotest_run = 0
 nanotest_pass = 0
+nanotest_stack = []
 
 def _is_core(expr, given):
     global nanotest_run
@@ -60,6 +61,39 @@ experimental and the given values are NOT equivalent."""
         nanotest_pass = nanotest_pass + 1
     else:
         test_print_fail_msg(test, given, msg, True)
+
+#-----------------------------------------------------------------------
+
+def pis_deeply(expr, given, msg):
+    """Test composite datastructures for equivalence.
+
+Like pis()and pisnt(), pis_deeply() takes three arguments: an
+experimental value, a given value, and a message. The first two should
+be composite data structures (lists, dictionaries, tuples), and they
+may be as deeply nested as you please. The third should be a string.
+
+The experimental and given structures will be compared for both
+composition and content. If they are not identical, the test fails and
+the message will be printed to STDOUT. Since this comparison is more
+complex than the one performed by pis/nt(), additional information
+about the exact nature of the failure will also be printed."""
+    global nanotest_run
+    nanotest_run++
+
+    # build dict of hashed expr structure. value is a 2-element list;
+    # 0 is actual value of leafnodes, 1 is a "seen" flag
+
+    # run hash function over given structure, but don't build struct
+    # from it. as each leafnode is found, look for its hash and value
+    # in the expr dict. if matching, set expr "seen" flag. if not,
+    # fail
+
+    # assuming no failures yet, iterate over expr dict for elements
+    # whose seen flag is not set. fail if we find one.
+
+    # empty nested structs should be encoded as leafnode values
+
+#-----------------------------------------------------------------------
     
 def test_print_fail_msg(expr, given, msg, invert):
     print("FAILED test {}: {}".format(nanotest_run, msg))
