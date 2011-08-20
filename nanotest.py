@@ -125,7 +125,7 @@ def deep_build_hash(element):
         nanotest_deepstack.pop()
     else:
         # we're a leafnode. add ourselves to hash
-        nanotest_deephash[":".join(nanotest_deepstack)] = element
+        nanotest_deephash[":".join(nanotest_deepstack)] = [element, 0]
 
 #-----------------------------------------------------------------------
     
