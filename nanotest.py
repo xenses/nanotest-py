@@ -106,9 +106,9 @@ about the exact nature of the failure will also be printed."""
 
 
 def _deep_build_hash(element, verify, msg):
+    global nanoconf
     if nanoconf['error']:
         return
-    global nanoconf
     if isinstance(element, (tuple, list, dict)):
         # composites are handled here
         if isinstance(element, (dict,)):
