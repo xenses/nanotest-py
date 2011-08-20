@@ -21,7 +21,8 @@ below."""
 
 nanotest_run = 0
 nanotest_pass = 0
-nanotest_stack = []
+nanotest_deepstack = ['root']
+nanotest_deephash  = {}
 
 def _is_core(expr, given):
     global nanotest_run
@@ -78,10 +79,18 @@ the message will be printed to STDOUT. Since this comparison is more
 complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
     global nanotest_run
-    nanotest_run++
+    global nanotest_deepstack
+    global nanotest_deephash
+    nanotest_run += 1
+    # ensure stack and hash are empty
+    if len(nanotest_deepstack) > 0:
+        nanotest_deepstack = ['root']
+    if len(nanotest_deephash) > 0:
+        nanotest_deephash = {}
 
     # build dict of hashed expr structure. value is a 2-element list;
     # 0 is actual value of leafnodes, 1 is a "seen" flag
+    deep_build_hash(expr)    
 
     # run hash function over given structure, but don't build struct
     # from it. as each leafnode is found, look for its hash and value
@@ -92,6 +101,31 @@ about the exact nature of the failure will also be printed."""
     # whose seen flag is not set. fail if we find one.
 
     # empty nested structs should be encoded as leafnode values
+
+def deep_build_hash(element):
+    global nanotest_deepstack
+    global nanotest_deephash
+    #elem_type = type(element) # for later, change 'if isinstance...' to 'if x == type(THING)'
+    if isinstance(element, (tuple, list, dict)):
+        if isinstance(element, (dict,)):
+            nanotest_deepstack.append('dict')
+            for key in sorted(element.keys()):
+                nanotest_deepstack.append(key)
+                deep_build_hash(element[key])
+                nanotest_deepstack.pop()
+        else:
+            if isinstance(element, (list,)):
+                nanotest_deepstack.append('list')
+            else:
+                nanotest_deepstack.append('tuple')
+            for idx, subelem in enumerate(element):
+                nanotest_deepstack.append(str(idx))
+                deep_build_hash(subelem)
+                nanotest_deepstack.pop()
+        nanotest_deepstack.pop()
+    else:
+        # we're a leafnode. add ourselves to hash
+        print(":".join(nanotest_deepstack), element)
 
 #-----------------------------------------------------------------------
     
@@ -108,4 +142,4 @@ def test_print_summary():
     passed. Should be called at the end of every test script."""
     print("{} {}".format(nanotest_run, nanotest_pass))
 
-__all__ = ["pis", "pisnt", "test_print_summary"]
+__all__ = ["pis", "pisnt", "pis_deeply", "test_print_summary"]
