@@ -13,7 +13,7 @@ failfiles  = 0
 def test_script_fail_abort(f, results):
     print(results[1])
     print(">>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
-    sys.exit(1)
+    sys.exit(results[0])
 
 # walk pwd tree
 print("Begin run: searching for modules and tests.")
@@ -59,6 +59,7 @@ if len(testfiles) > 0:
     if tests_failed > 0:
         print("   Tests failing:   {}, in {} script(s)".format(tests_failed, failfiles))
         print(">>FAIL<<")
+        sys.exit(1)
     else:
         print("Success")
 else:
