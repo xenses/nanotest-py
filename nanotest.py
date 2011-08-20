@@ -62,7 +62,7 @@ experimental and the given values are NOT equivalent."""
     if not _is_core(expr, given):
         nanotest_pass = nanotest_pass + 1
     else:
-        _print_is_fail_msg(test, given, msg, True)
+        _print_is_fail_msg(expr, given, msg, True)
 
 #-----------------------------------------------------------------------
 
@@ -130,7 +130,7 @@ def _deep_build_hash(element, verify, msg):
     else:
         # we're a leafnode
         if verify:
-            key = ".".join(nanotest_deepstack)
+            key == ".".join(nanotest_deepstack)
             if node not in nanotest_deephash:
                 _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
             else:
@@ -146,7 +146,7 @@ def _deep_build_hash(element, verify, msg):
 def _print_is_fail_msg(expr, given, msg, invert):
     print("FAILED test {}: {}".format(nanotest_run, msg))
     if invert:
-        print("Expected anything but '{}' and got it anyway".format(given))
+        print("   Expected anything but '{}' and got it anyway".format(given))
     else:
         print("   Expected: '{}'".format(given))
         print("   Got     : '{}'".format(expr))
@@ -159,9 +159,9 @@ def _print_deep_fail_msg(msg, mode, key, expr, given):
     if mode == "badvalue":
         print("   Values at {} don't match".format(key))
         print("   Expected '{}'; got '{}'".format(expr, given))
-    elif mode = "nomatchinexpr":
+    elif mode == "nomatchinexpr":
         print("   Node {} exists in given struct but not experimental struct".format(key))
-    elif mode = "nomatchingiven":
+    elif mode == "nomatchingiven":
         print("   Node {} exists in experimental struct but not given struct".format(key))
 
 
