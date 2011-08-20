@@ -115,7 +115,7 @@ def _deep_build_hash(element, verify, msg):
             nanotest_deepstack.append('dict')
             for key in sorted(element.keys()):
                 nanotest_deepstack.append(key)
-                _deep_build_hash(element[key], verify)
+                _deep_build_hash(element[key], verify, msg)
                 nanotest_deepstack.pop()
         else:
             if isinstance(element, (list,)):
@@ -124,7 +124,7 @@ def _deep_build_hash(element, verify, msg):
                 nanotest_deepstack.append('tuple')
             for idx, subelem in enumerate(element):
                 nanotest_deepstack.append(str(idx))
-                _deep_build_hash(subelem, verify)
+                _deep_build_hash(subelem, verify, msg)
                 nanotest_deepstack.pop()
         nanotest_deepstack.pop()
     else:
