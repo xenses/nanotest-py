@@ -94,12 +94,5 @@ pis("root.dict.q.list.2.tuple.1" in nanotest.nanotest_deephash,   True, "elem di
 pis(nanotest.nanotest_deephash["root.dict.q.list.2.tuple.1"][0],   'y', "elem dict.c.dict.q.list.2.tuple.1[0] is 'y'")
 pis(nanotest.nanotest_deephash["root.dict.q.list.2.tuple.1"][1], False, "elem dict.c.dict.q.list.2.tuple.1[1] is 'False'")
 
-# failures
-#
-# value mismatch
-print(">>>>>>> Now testing failing tests:  3 tests will appear to fail <<<<<<<")
-print(">>> So long as the end-of-run result is success, everything is okay <<<")
-
-
 # end-of-run
 nanotest_summary();
