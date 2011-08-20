@@ -23,6 +23,7 @@ nanotest_run = 0
 nanotest_pass = 0
 nanotest_deepstack = ['root']
 nanotest_deephash  = {}
+nanotest_error = False
 
 def _is_core(expr, given):
     global nanotest_run
@@ -48,7 +49,7 @@ failure and the message will be printed to STDOUT.
     if _is_core(expr, given):
         nanotest_pass += 1
     else:
-        test_print_fail_msg(expr, given, msg, False)
+        _print_is_fail_msg(expr, given, msg, False)
 
 def pisnt(expr, given, msg):
     """Test for difference.
@@ -61,7 +62,7 @@ experimental and the given values are NOT equivalent."""
     if not _is_core(expr, given):
         nanotest_pass = nanotest_pass + 1
     else:
-        test_print_fail_msg(test, given, msg, True)
+        _print_is_fail_msg(test, given, msg, True)
 
 #-----------------------------------------------------------------------
 
@@ -88,26 +89,33 @@ about the exact nature of the failure will also be printed."""
 
     # build dict of hashed expr structure. value is a 2-element list;
     # 0 is actual value of leafnodes, 1 is a "seen" flag
-    deep_build_hash(expr, False)
+    _deep_build_hash(expr, False, None)
 
     # run hash function over given structure, but don't build struct
     # from it. as each leafnode is found, look for its hash and value
     # in the expr dict. if matching, set expr "seen" flag. if not,
     # fail
-    deep_build_hash(given, True)
+    _deep_build_hash(given, True, msg)
+    if nanotest_error:
+        return
 
     # assuming no failures yet, iterate over expr dict for elements
     # whose seen flag is not set. fail if we find one.
 
 
-def deep_build_hash(element, verify):
+
+def _deep_build_hash(element, verify, msg):
+    if nanotest_error:
+        return
+    global nanotest_deepstack
+    global nanotest_deephash
     #elem_type = type(element) # for later, change 'if isinstance...' to 'if x == type(THING)'
     if isinstance(element, (tuple, list, dict)):
         if isinstance(element, (dict,)):
             nanotest_deepstack.append('dict')
             for key in sorted(element.keys()):
                 nanotest_deepstack.append(key)
-                deep_build_hash(element[key], verify)
+                _deep_build_hash(element[key], verify)
                 nanotest_deepstack.pop()
         else:
             if isinstance(element, (list,)):
@@ -116,25 +124,46 @@ def deep_build_hash(element, verify):
                 nanotest_deepstack.append('tuple')
             for idx, subelem in enumerate(element):
                 nanotest_deepstack.append(str(idx))
-                deep_build_hash(subelem, verify)
+                _deep_build_hash(subelem, verify)
                 nanotest_deepstack.pop()
         nanotest_deepstack.pop()
     else:
         # we're a leafnode
         if verify:
-            pass
+            key = ".".join(nanotest_deepstack)
+            if node not in nanotest_deephash:
+                _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
+            else:
+                if nanotest_deephash[key] != element:
+                    _print_deep_fail_msg(msg, "nomatchinexpr", key, nanotest_deephash[key], element)
+                else:
+                    nanotest_deephash[key][1] = 1
         else:
             nanotest_deephash[".".join(nanotest_deepstack)] = [element, 0]
 
 #-----------------------------------------------------------------------
     
-def test_print_fail_msg(expr, given, msg, invert):
+def _print_is_fail_msg(expr, given, msg, invert):
     print("FAILED test {}: {}".format(nanotest_run, msg))
     if invert:
         print("Expected anything but '{}' and got it anyway".format(given))
     else:
         print("   Expected: '{}'".format(given))
         print("   Got     : '{}'".format(expr))
+
+
+def _print_deep_fail_msg(msg, mode, key, expr, given):
+    global nanotest_error
+    nanotest_error = True
+    print("FAILED test {}: {}".format(nanotest_run, msg))
+    if mode == "badvalue":
+        print("   Values at {} don't match".format(key))
+        print("   Expected '{}'; got '{}'".format(expr, given))
+    elif mode = "nomatchinexpr":
+        print("   Node {} exists in given struct but not experimental struct".format(key))
+    elif mode = "nomatchingiven":
+        print("   Node {} exists in experimental struct but not given struct".format(key))
+
 
 def nanotest_summary():
     """Utility function which prints the number of tests run and

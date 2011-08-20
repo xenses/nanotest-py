@@ -1,5 +1,16 @@
 nanotest-py Changelog
 
+1.1.0     XX Aug 2011
+
+          BACKWARD INCOMPATIBLE CHANGE: The end-of-script summary
+          function has had a name change. It is now 'nanotest_summary'
+          instead of the obtuse 'test_print_summary'.
+
+          New testing function: pis_deeply(). Tests arbitrary
+          structures for congruence (that is, they have the same
+          structure and the same values at all endpoints of the
+          structure).
+
 1.0.3     12 Aug 2011
 
           Output formatting improvements
