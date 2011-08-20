@@ -9,9 +9,11 @@ pis(nanotest._is_core(1,1), True, "identity");
 pis(nanotest._is_core(1,0), False, "nonidentity");
 nanotest.nanotest_run -= 2; # make the two inner tests go away for counting purposes
 
-print("The next test will fail, as failure is being tested. Please disregard.");
-pis(1, 0, "Of course zero doesn't equal one.");
-nanotest.nanotest_pass += 1; # let's smooth that over :)
+print(">>>>>>> Now testing failing tests:  2 tests will appear to fail <<<<<<<")
+print(">>> So long as the end-of-run result is success, everything is okay <<<")
+pis(1, 0, "pis() failure: Of course zero doesn't equal one.");
+pisnt(1, 1, "pisnt() failure: Of course one equals one.");
+nanotest.nanotest_pass += 2; # let's smooth that over :)
 
 # end-of-run
 nanotest_summary();
