@@ -137,9 +137,9 @@ def _deep_build_hash(element, verify, msg):
                 if nanotest_deephash[key] != element:
                     _print_deep_fail_msg(msg, "nomatchinexpr", key, nanotest_deephash[key], element)
                 else:
-                    nanotest_deephash[key][1] = 1
+                    nanotest_deephash[key][1] = True
         else:
-            nanotest_deephash[".".join(nanotest_deepstack)] = [element, 0]
+            nanotest_deephash[".".join(nanotest_deepstack)] = [element, False]
 
 #-----------------------------------------------------------------------
     

@@ -11,6 +11,10 @@ nanotest-py Changelog
           structure and the same values at all endpoints of the
           structure).
 
+          bin/nanotest now sorts test files before running (bugfix)
+
+          bugfixes and tweaks to nanotest.py            
+
 1.0.3     12 Aug 2011
 
           Output formatting improvements
