@@ -19,18 +19,17 @@ in each test script. Four functions will be exported into your
 namespace: three for testing and one for reporting. They are detailed
 below."""
 
-nanotest_run = 0
-nanotest_pass = 0
-nanotest_deepstack = ['root']
-nanotest_deephash  = {}
-nanotest_error = False
-
-nanotest_quiet  = False
-nanotest_silent = False
+nanoconf = { 'run':0,
+                  'pass':0,
+                  'deepstack':['root'],
+                  'deephash':{},
+                  'error':False,
+                  'quiet':False,
+                  'silent':False, }
 
 def _is_core(expr, given):
-    global nanotest_run
-    nanotest_run += 1
+    global nanoconf
+    nanoconf['run'] += 1
     if expr == given:
         return True
     return False
@@ -48,9 +47,9 @@ If the experimental and given values are equivalent, the test is a
 success and nothing happens. If they are different, the test is a
 failure and the message will be printed to STDOUT.
 """
-    global nanotest_pass
+    global nanoconf
     if _is_core(expr, given):
-        nanotest_pass += 1
+        nanoconf['pass'] += 1
     else:
         _print_is_fail_msg(expr, given, msg, False)
 
@@ -61,9 +60,9 @@ pisnt() is named so that it will match pis().
 
 Works exactly like pis(), but backwards: tests succeed if the
 experimental and the given values are NOT equivalent."""
-    global nanotest_pass
+    global nanoconf
     if not _is_core(expr, given):
-        nanotest_pass = nanotest_pass + 1
+        nanoconf['pass'] = nanoconf['pass'] + 1
     else:
         _print_is_fail_msg(expr, given, msg, True)
 
@@ -83,83 +82,77 @@ the message will be printed to STDOUT. Since this comparison is more
 complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
     # reset state (as needed)
-    global nanotest_run
-    global nanotest_pass
-    global nanotest_error
-    global nanotest_deepstack
-    global nanotest_deephash
-    nanotest_error = False
-    nanotest_run += 1
-    if len(nanotest_deepstack) > 1:
-        nanotest_deepstack = ['root']
-    if len(nanotest_deephash) > 0:
-        nanotest_deephash = {}
+    global nanoconf
+    nanoconf['error'] = False
+    nanoconf['run'] += 1
+    if len(nanoconf['deepstack']) > 1:
+        nanoconf['deepstack'] = ['root']
+    if len(nanoconf['deephash']) > 0:
+        nanoconf['deephash'] = {}
     # build dict of hashed expr structure.
     _deep_build_hash(expr, False, None)
     # run hash function over given structure, in verify mode
     _deep_build_hash(given, True, msg)
-    if nanotest_error:
+    if nanoconf['error']:
         return
     # iterate over expr dict for elements whose seen flag is not
     # set. fail if we find one.
-    for k, v in nanotest_deephash.items():
+    for k, v in nanoconf['deephash'].items():
         if v[1] == False:
             _print_deep_fail_msg(msg, "momatchingiven", k, None, None)
             return
     # made it here? pass.
-    nanotest_pass += 1
+    nanoconf['pass'] += 1
 
 
 def _deep_build_hash(element, verify, msg):
-    if nanotest_error:
+    if nanoconf['error']:
         return
-    global nanotest_deepstack
-    global nanotest_deephash
+    global nanoconf
     if isinstance(element, (tuple, list, dict)):
         # composites are handled here
         if isinstance(element, (dict,)):
             # dict
-            nanotest_deepstack.append('dict')
+            nanoconf['deepstack'].append('dict')
             for key in sorted(element.keys()):
-                nanotest_deepstack.append(key)
+                nanoconf['deepstack'].append(key)
                 _deep_build_hash(element[key], verify, msg)
-                nanotest_deepstack.pop()
+                nanoconf['deepstack'].pop()
         else:
             if isinstance(element, (list,)):
-                nanotest_deepstack.append('list')
+                nanoconf['deepstack'].append('list')
             else:
-                nanotest_deepstack.append('tuple')
+                nanoconf['deepstack'].append('tuple')
             for idx, subelem in enumerate(element):
-                nanotest_deepstack.append(str(idx))
+                nanoconf['deepstack'].append(str(idx))
                 _deep_build_hash(subelem, verify, msg)
-                nanotest_deepstack.pop()
-        nanotest_deepstack.pop()
+                nanoconf['deepstack'].pop()
+        nanoconf['deepstack'].pop()
     else:
         # leafnodes handled here
         if verify:
             # in verify mode we build the element's key and check that
             # (1) it exists in deephash and (2) its value there is the
             # same as our value here. unless 1 and 2, it's a fail.
-            global nanotest_error
-            key = ".".join(nanotest_deepstack)
-            if key not in nanotest_deephash:
+            key = ".".join(nanoconf['deepstack'])
+            if key not in nanoconf['deephash']:
                 _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
-                nanotest_error = True
+                nanoconf['error'] = True
             else:
-                if nanotest_deephash[key][0] != element:
-                    _print_deep_fail_msg(msg, "badvalue", key, nanotest_deephash[key], element)
-                    nanotest_error = True
+                if nanoconf['deephash'][key][0] != element:
+                    _print_deep_fail_msg(msg, "badvalue", key, nanoconf['deephash'][key], element)
+                    nanoconf['error'] = True
                 else:
-                    nanotest_deephash[key][1] = True
+                    nanoconf['deephash'][key][1] = True
         else:
-            nanotest_deephash[".".join(nanotest_deepstack)] = [element, False]
+            nanoconf['deephash'][".".join(nanoconf['deepstack'])] = [element, False]
 
 #-----------------------------------------------------------------------
     
 def _print_is_fail_msg(expr, given, msg, invert):
-    if nanotest_silent:
+    if nanoconf['silent']:
         return
-    print("FAILED test {}: {}".format(nanotest_run, msg))
+    print("FAILED test {}: {}".format(nanoconf['run'], msg))
     if invert:
         print("   Expected anything but '{}' and got it anyway".format(given))
     else:
@@ -168,9 +161,9 @@ def _print_is_fail_msg(expr, given, msg, invert):
 
 
 def _print_deep_fail_msg(msg, mode, key, expr, given):
-    if nanotest_silent:
+    if nanoconf['silent']:
         return
-    print("FAILED test {}: {}".format(nanotest_run, msg))
+    print("FAILED test {}: {}".format(nanoconf['run'], msg))
     if mode == "badvalue":
         print("   Values at {} don't match".format(key))
         print("   Expected '{}'; got '{}'".format(expr, given))
@@ -183,6 +176,6 @@ def _print_deep_fail_msg(msg, mode, key, expr, given):
 def nanotest_summary():
     """Utility function which prints the number of tests run and
     passed. Should be called at the end of every test script."""
-    print("{} {}".format(nanotest_run, nanotest_pass))
+    print("{} {}".format(nanoconf['run'], nanoconf['pass']))
 
 __all__ = ["pis", "pisnt", "pis_deeply", "nanotest_summary"]
