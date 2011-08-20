@@ -18,7 +18,7 @@ def test_script_fail_abort(f, results):
 # walk pwd tree
 print("Begin run: searching for modules and tests.")
 for root, dirs, files in os.walk("."):
-    for f in files:
+    for f in sorted(files):
         if f[-3:] == ".py":
             if root[-6:] == "/tests":
                 testfiles.append(os.path.join(root,f))
