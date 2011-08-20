@@ -12,7 +12,7 @@ failfiles  = 0
 
 def test_script_fail_abort(f, results):
     print(results[1])
-    print(">>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
+    print("\n>>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
     sys.exit(results[0])
 
 # walk pwd tree

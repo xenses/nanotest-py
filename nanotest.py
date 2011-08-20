@@ -79,29 +79,27 @@ composition and content. If they are not identical, the test fails and
 the message will be printed to STDOUT. Since this comparison is more
 complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
+    # reset state (as needed)
     global nanotest_run
+    global nanotest_error
+    nanotest_error = False
     nanotest_run += 1
-    # ensure stack and hash are empty
     if len(nanotest_deepstack) > 1:
         nanotest_deepstack = ['root']
     if len(nanotest_deephash) > 0:
         nanotest_deephash = {}
-
-    # build dict of hashed expr structure. value is a 2-element list;
-    # 0 is actual value of leafnodes, 1 is a "seen" flag
+    # build dict of hashed expr structure.
     _deep_build_hash(expr, False, None)
-
-    # run hash function over given structure, but don't build struct
-    # from it. as each leafnode is found, look for its hash and value
-    # in the expr dict. if matching, set expr "seen" flag. if not,
-    # fail
+    # run hash function over given structure, in verify mode
     _deep_build_hash(given, True, msg)
     if nanotest_error:
         return
-
-    # assuming no failures yet, iterate over expr dict for elements
-    # whose seen flag is not set. fail if we find one.
-
+    # iterate over expr dict for elements whose seen flag is not
+    # set. fail if we find one.
+    if nanotest_error:
+        return
+    # made it here? pass.
+    nanotest_pass += 1
 
 
 def _deep_build_hash(element, verify, msg):
@@ -109,9 +107,10 @@ def _deep_build_hash(element, verify, msg):
         return
     global nanotest_deepstack
     global nanotest_deephash
-    #elem_type = type(element) # for later, change 'if isinstance...' to 'if x == type(THING)'
     if isinstance(element, (tuple, list, dict)):
+        # composites are handled here
         if isinstance(element, (dict,)):
+            # dict
             nanotest_deepstack.append('dict')
             for key in sorted(element.keys()):
                 nanotest_deepstack.append(key)
@@ -128,14 +127,20 @@ def _deep_build_hash(element, verify, msg):
                 nanotest_deepstack.pop()
         nanotest_deepstack.pop()
     else:
-        # we're a leafnode
+        # leafnodes handled here
         if verify:
+            # in verify mode we build the element's key and check that
+            # (1) it exists in deephash and (2) its value there is the
+            # same as our value here. unless 1 and 2, it's a fail.
+            global nanotest_error
             key == ".".join(nanotest_deepstack)
             if node not in nanotest_deephash:
                 _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
+                nanotest_error = True
             else:
                 if nanotest_deephash[key] != element:
                     _print_deep_fail_msg(msg, "nomatchinexpr", key, nanotest_deephash[key], element)
+                    nanotest_error = True
                 else:
                     nanotest_deephash[key][1] = True
         else:
