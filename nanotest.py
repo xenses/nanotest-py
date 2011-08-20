@@ -81,6 +81,7 @@ complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
     # reset state (as needed)
     global nanotest_run
+    global nanotest_pass
     global nanotest_error
     global nanotest_deepstack
     global nanotest_deephash
@@ -140,8 +141,8 @@ def _deep_build_hash(element, verify, msg):
                 _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
                 nanotest_error = True
             else:
-                if nanotest_deephash[key] != element:
-                    _print_deep_fail_msg(msg, "nomatchinexpr", key, nanotest_deephash[key], element)
+                if nanotest_deephash[key][0] != element:
+                    _print_deep_fail_msg(msg, "badvalue", key, nanotest_deephash[key], element)
                     nanotest_error = True
                 else:
                     nanotest_deephash[key][1] = True
