@@ -83,14 +83,14 @@ about the exact nature of the failure will also be printed."""
     global nanotest_deephash
     nanotest_run += 1
     # ensure stack and hash are empty
-    if len(nanotest_deepstack) > 0:
+    if len(nanotest_deepstack) > 1:
         nanotest_deepstack = ['root']
     if len(nanotest_deephash) > 0:
         nanotest_deephash = {}
 
     # build dict of hashed expr structure. value is a 2-element list;
     # 0 is actual value of leafnodes, 1 is a "seen" flag
-    deep_build_hash(expr)    
+    deep_build_hash(expr, False)
 
     # run hash function over given structure, but don't build struct
     # from it. as each leafnode is found, look for its hash and value
@@ -102,7 +102,7 @@ about the exact nature of the failure will also be printed."""
 
     # empty nested structs should be encoded as leafnode values
 
-def deep_build_hash(element):
+def deep_build_hash(element, verify):
     global nanotest_deepstack
     global nanotest_deephash
     #elem_type = type(element) # for later, change 'if isinstance...' to 'if x == type(THING)'
@@ -111,7 +111,7 @@ def deep_build_hash(element):
             nanotest_deepstack.append('dict')
             for key in sorted(element.keys()):
                 nanotest_deepstack.append(key)
-                deep_build_hash(element[key])
+                deep_build_hash(element[key], verify)
                 nanotest_deepstack.pop()
         else:
             if isinstance(element, (list,)):
@@ -120,12 +120,15 @@ def deep_build_hash(element):
                 nanotest_deepstack.append('tuple')
             for idx, subelem in enumerate(element):
                 nanotest_deepstack.append(str(idx))
-                deep_build_hash(subelem)
+                deep_build_hash(subelem, verify)
                 nanotest_deepstack.pop()
         nanotest_deepstack.pop()
     else:
-        # we're a leafnode. add ourselves to hash
-        nanotest_deephash[":".join(nanotest_deepstack)] = [element, 0]
+        # we're a leafnode
+        if verify:
+            pass
+        else:
+            nanotest_deephash[":".join(nanotest_deepstack)] = [element, 0]
 
 #-----------------------------------------------------------------------
     
