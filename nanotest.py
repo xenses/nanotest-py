@@ -25,6 +25,9 @@ nanotest_deepstack = ['root']
 nanotest_deephash  = {}
 nanotest_error = False
 
+nanotest_quiet  = False
+nanotest_silent = False
+
 def _is_core(expr, given):
     global nanotest_run
     nanotest_run += 1
@@ -99,8 +102,10 @@ about the exact nature of the failure will also be printed."""
         return
     # iterate over expr dict for elements whose seen flag is not
     # set. fail if we find one.
-    if nanotest_error:
-        return
+    for k, v in nanotest_deephash.items():
+        if v[1] == False:
+            _print_deep_fail_msg(msg, "momatchingiven", k, None, None)
+            return
     # made it here? pass.
     nanotest_pass += 1
 
@@ -152,6 +157,8 @@ def _deep_build_hash(element, verify, msg):
 #-----------------------------------------------------------------------
     
 def _print_is_fail_msg(expr, given, msg, invert):
+    if nanotest_silent:
+        return
     print("FAILED test {}: {}".format(nanotest_run, msg))
     if invert:
         print("   Expected anything but '{}' and got it anyway".format(given))
@@ -161,8 +168,8 @@ def _print_is_fail_msg(expr, given, msg, invert):
 
 
 def _print_deep_fail_msg(msg, mode, key, expr, given):
-    global nanotest_error
-    nanotest_error = True
+    if nanotest_silent:
+        return
     print("FAILED test {}: {}".format(nanotest_run, msg))
     if mode == "badvalue":
         print("   Values at {} don't match".format(key))
