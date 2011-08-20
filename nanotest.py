@@ -82,6 +82,8 @@ about the exact nature of the failure will also be printed."""
     # reset state (as needed)
     global nanotest_run
     global nanotest_error
+    global nanotest_deepstack
+    global nanotest_deephash
     nanotest_error = False
     nanotest_run += 1
     if len(nanotest_deepstack) > 1:
@@ -133,8 +135,8 @@ def _deep_build_hash(element, verify, msg):
             # (1) it exists in deephash and (2) its value there is the
             # same as our value here. unless 1 and 2, it's a fail.
             global nanotest_error
-            key == ".".join(nanotest_deepstack)
-            if node not in nanotest_deephash:
+            key = ".".join(nanotest_deepstack)
+            if key not in nanotest_deephash:
                 _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
                 nanotest_error = True
             else:
