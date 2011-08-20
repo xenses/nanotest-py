@@ -14,4 +14,4 @@ pis(1, 0, "Of course zero doesn't equal one.");
 nanotest.nanotest_pass += 1; # let's smooth that over :)
 
 # end-of-run
-test_print_summary();
+nanotest_summary();

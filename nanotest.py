@@ -79,8 +79,6 @@ the message will be printed to STDOUT. Since this comparison is more
 complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
     global nanotest_run
-    global nanotest_deepstack
-    global nanotest_deephash
     nanotest_run += 1
     # ensure stack and hash are empty
     if len(nanotest_deepstack) > 1:
@@ -96,15 +94,13 @@ about the exact nature of the failure will also be printed."""
     # from it. as each leafnode is found, look for its hash and value
     # in the expr dict. if matching, set expr "seen" flag. if not,
     # fail
+    deep_build_hash(given, True)
 
     # assuming no failures yet, iterate over expr dict for elements
     # whose seen flag is not set. fail if we find one.
 
-    # empty nested structs should be encoded as leafnode values
 
 def deep_build_hash(element, verify):
-    global nanotest_deepstack
-    global nanotest_deephash
     #elem_type = type(element) # for later, change 'if isinstance...' to 'if x == type(THING)'
     if isinstance(element, (tuple, list, dict)):
         if isinstance(element, (dict,)):
@@ -128,7 +124,7 @@ def deep_build_hash(element, verify):
         if verify:
             pass
         else:
-            nanotest_deephash[":".join(nanotest_deepstack)] = [element, 0]
+            nanotest_deephash[".".join(nanotest_deepstack)] = [element, 0]
 
 #-----------------------------------------------------------------------
     
@@ -140,9 +136,9 @@ def test_print_fail_msg(expr, given, msg, invert):
         print("   Expected: '{}'".format(given))
         print("   Got     : '{}'".format(expr))
 
-def test_print_summary():
+def nanotest_summary():
     """Utility function which prints the number of tests run and
     passed. Should be called at the end of every test script."""
     print("{} {}".format(nanotest_run, nanotest_pass))
 
-__all__ = ["pis", "pisnt", "pis_deeply", "test_print_summary"]
+__all__ = ["pis", "pisnt", "pis_deeply", "nanotest_summary"]
