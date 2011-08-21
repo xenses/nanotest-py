@@ -78,11 +78,14 @@ experimental value, a given value, and a message. The first two should
 be composite data structures (lists, dictionaries, tuples), and they
 may be as deeply nested as you please. The third should be a string.
 
-The experimental and given structures will be compared for both
-composition and content. If they are not identical, the test fails and
-the message will be printed to STDOUT. Since this comparison is more
-complex than the one performed by pis/nt(), additional information
-about the exact nature of the failure will also be printed."""
+The experimental and given structures will be tested for "congruence"
+(that is, they have the same structure and the same values at all
+endpoints of the structure). If they are not identical, the test fails
+and the message will be printed to STDOUT.
+
+Since this comparison is more complex than the one performed by
+pis/nt(), additional information about the exact nature of the failure
+will also be printed."""
     # reset state
     global nanoconf
     nanoconf['error'] = False
