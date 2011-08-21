@@ -20,12 +20,14 @@ namespace: three for testing and one for reporting. They are detailed
 below."""
 
 nanoconf = { 'run':0,
-                  'pass':0,
-                  'deepstack':['root'],
-                  'deephash':{},
-                  'error':False,
-                  'quiet':False,
-                  'silent':False, }
+             'pass':0,
+             'deepstack':['root'],
+             'deephash':{},
+             'error':False,
+             'errmode':None,
+             'errkey':None,
+             'quiet':False,
+             'silent':False, }
 
 def _is_core(expr, given):
     global nanoconf
@@ -81,9 +83,11 @@ composition and content. If they are not identical, the test fails and
 the message will be printed to STDOUT. Since this comparison is more
 complex than the one performed by pis/nt(), additional information
 about the exact nature of the failure will also be printed."""
-    # reset state (as needed)
+    # reset state
     global nanoconf
     nanoconf['error'] = False
+    nanoconf['errcode'] = None
+    nanoconf['errkey']  = None
     nanoconf['run'] += 1
     if len(nanoconf['deepstack']) > 1:
         nanoconf['deepstack'] = ['root']
@@ -99,7 +103,10 @@ about the exact nature of the failure will also be printed."""
     # set. fail if we find one.
     for k, v in nanoconf['deephash'].items():
         if v[1] == False:
-            _print_deep_fail_msg(msg, "momatchingiven", k, None, None)
+            nanoconf['error'] = True
+            nanoconf['errcode'] = "nomatchingiven"
+            nanoconf['errkey'] = k
+            _print_deep_fail_msg(msg, None, None)
             return
     # made it here? pass.
     nanoconf['pass'] += 1
@@ -136,12 +143,16 @@ def _deep_build_hash(element, verify, msg):
             # same as our value here. unless 1 and 2, it's a fail.
             key = ".".join(nanoconf['deepstack'])
             if key not in nanoconf['deephash']:
-                _print_deep_fail_msg(msg, "nomatchinexpr", key, None, None)
                 nanoconf['error'] = True
+                nanoconf['errcode'] = "nomatchinexpr"
+                nanoconf['errkey'] = key
+                _print_deep_fail_msg(msg, None, None)
             else:
                 if nanoconf['deephash'][key][0] != element:
-                    _print_deep_fail_msg(msg, "badvalue", key, nanoconf['deephash'][key], element)
                     nanoconf['error'] = True
+                    nanoconf['errcode'] = "badvalue"
+                    nanoconf['errkey'] = key
+                    _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
                 else:
                     nanoconf['deephash'][key][1] = True
         else:
@@ -160,17 +171,17 @@ def _print_is_fail_msg(expr, given, msg, invert):
         print("   Got     : '{}'".format(expr))
 
 
-def _print_deep_fail_msg(msg, mode, key, expr, given):
+def _print_deep_fail_msg(msg, expr, given):
     if nanoconf['silent']:
         return
     print("FAILED test {}: {}".format(nanoconf['run'], msg))
-    if mode == "badvalue":
-        print("   Values at {} don't match".format(key))
+    if nanoconf['errcode'] == "badvalue":
+        print("   Values at {} don't match".format(nanoconf['errkey']))
         print("   Expected '{}'; got '{}'".format(expr, given))
-    elif mode == "nomatchinexpr":
-        print("   Node {} exists in given struct but not experimental struct".format(key))
-    elif mode == "nomatchingiven":
-        print("   Node {} exists in experimental struct but not given struct".format(key))
+    elif nanoconf['errcode'] == "nomatchinexpr":
+        print("   Node {} exists in given struct but not experimental struct".format(nanoconf['errkey']))
+    elif nanoconf['errcode'] == "nomatchingiven":
+        print("   Node {} exists in experimental struct but not given struct".format(nanoconf['errkey']))
 
 
 def nanotest_summary():
