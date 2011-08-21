@@ -1,6 +1,6 @@
 nanotest-py Changelog
 
-1.1.0     XX Aug 2011
+1.1.0     20 Aug 2011
 
           BACKWARD INCOMPATIBLE CHANGE: The end-of-script summary
           function has had a name change. It is now 'nanotest_summary'
