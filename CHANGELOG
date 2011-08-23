@@ -1,5 +1,11 @@
 nanotest-py Changelog
 
+1.1.1     22 Aug 2011
+
+          bin/nanotest now has two command-line options: --quiet (only
+          print errors) and --silent (produce no output). These allow
+          it to be much better integrated into an automated process.
+
 1.1.0     20 Aug 2011
 
           BACKWARD INCOMPATIBLE CHANGE: The end-of-script summary

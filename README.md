@@ -4,6 +4,10 @@ nanotest-py
 A reimplementation of `nanotest.js` from my Javascript library, which
 is itself a tiny, fragmentary implementation of Perl's `Test::More`.
 
+*Don't complain that testing is too hard! Use nanotest and get to work!*
+
+nanotest-py is Python 3 only.
+
 ----
 
 Development HEAD is not guaranteed to be complete, or even in working
@@ -24,9 +28,8 @@ Installation is standard:
 
     python setup.py install
 
-See `pydoc nanotest` for details on use and how to write test scripts.
+See `pydoc nanotest` for details on use and how to write test scripts
+and `nanotest --help` for information on the runner/harness script.
 
 For more information or to contact me, see the [module
 homepage](https://github.com/firepear/nanotest-py/)
-
-*Don't complain that testing is too hard! Use nanotest and get to work!*
