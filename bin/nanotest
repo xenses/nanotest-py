@@ -5,11 +5,13 @@ import os
 import subprocess
 import sys
 
-parser = argparse.ArgumentParser(description='nanotest-py test runner+harness.')
-parser.add_argument("--quiet", action="store_true", help="Only print error output")
-parser.add_argument("--silent", action="store_true", help ="Print nothing at all")
-parser.add_argument('--version', action='version', version='%(prog)s 1.1.1')
+parser = argparse.ArgumentParser(description="Find any and all files '{...}/tests/*py' in the current subtree and run them as nanotest-py tests.")
+parser.add_argument("-q", "--quiet", action="store_true", help="Only print error output")
+parser.add_argument("-s", "--silent", action="store_true", help ="Print nothing at all")
+parser.add_argument("-v", '--version', action='version', version='%(prog)s 1.1.1')
 args = parser.parse_args()
+if args.silent:
+    args.quiet = True
 
 tests_run    = 0
 tests_passed = 0
@@ -17,13 +19,17 @@ pythonpath = ['./']
 testfiles  = []
 failfiles  = 0
 
+
 def test_script_fail_abort(f, results):
     print(results[1])
     print("\n>>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
     sys.exit(results[0])
 
+
+if not args.quiet:
+    print("Begin run: searching for modules and tests.")
+
 # walk pwd tree
-print("Begin run: searching for modules and tests.")
 for root, dirs, files in os.walk("."):
     for f in sorted(files):
         if f[-3:] == ".py":
@@ -31,13 +37,11 @@ for root, dirs, files in os.walk("."):
                 testfiles.append(os.path.join(root,f))
             else:
                 pythonpath.append(os.path.join(root,f))
-
 # build the PYTHONPATH value
 pypathstr = ":".join(pythonpath)
 
-# run each test found
+# now run each test found
 for test in testfiles:
-    print("   Running {} - ".format(test), end='') 
     results = subprocess.getstatusoutput("PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
     # abort if the test script as a whole failed
     if results[0] != 0:
@@ -46,28 +50,36 @@ for test in testfiles:
     reslist = results[1].split("\n")
     trun, tpass = reslist[-1].split();
     reslist.pop()
-    # tell about success or failure
-    if trun == tpass:
-        print("{}/{} passing; ok".format(tpass, trun))
-    else:
-        print("{}/{} passing; FAIL".format(tpass, trun))
-        failfiles += 1
-    # print errors, if any
-    if len(reslist) > 0:
-        print("\n".join(["      " + line for line in reslist]))
-    # print script summary and add to totals
+    # add counts to totals
     tests_run += int(trun)
     tests_passed += int(tpass)
+    # tell about success or failure
+    if trun == tpass:
+        if not args.quiet:
+            print("   {}: {}/{} passing; ok".format(test, tpass, trun))
+    else:
+        failfiles += 1
+        if not args.silent:
+            print("   {}: {}/{} passing; FAIL".format(test, tpass, trun))
+    # print errors, if any
+    if len(reslist) > 0:
+        if not args.silent:
+            print("\n".join(["      " + line for line in reslist]))
 
+# assuming we found any tests, give a summary (or not)
 if len(testfiles) > 0:
-    print("End of run")
-    print("   Tests passing: {}/{}, in {} script(s)".format(tests_passed, tests_run, len(testfiles)))
     tests_failed = tests_run - tests_passed
+    if not args.quiet:
+        print("End of run")
+        print("   Tests passing: {}/{}, in {} script(s)".format(tests_passed, tests_run, len(testfiles)))
     if tests_failed > 0:
-        print("   Tests failing:   {}, in {} script(s)".format(tests_failed, failfiles))
-        print(">> FAIL <<")
+        if not args.silent:
+            print("   Tests failing:   {}, in {} script(s)".format(tests_failed, failfiles))
+            print(">> FAIL <<")
         sys.exit(1)
     else:
-        print("Success")
+        if not args.quiet:
+            print("Success")
 else:
-    print("No tests found; nothing to do.")
+    if not args.quiet:
+        print("No tests found; nothing to do.")
