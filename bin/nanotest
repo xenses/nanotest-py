@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 
+import argparse
 import os
 import subprocess
 import sys
+
+parser = argparse.ArgumentParser(description='nanotest-py test runner+harness.')
+parser.add_argument("--quiet", action="store_true", help="Only print error output")
+parser.add_argument("--silent", action="store_true", help ="Print nothing at all")
+parser.add_argument('--version', action='version', version='%(prog)s 1.1.1')
+args = parser.parse_args()
 
 tests_run    = 0
 tests_passed = 0
