@@ -19,6 +19,8 @@ in each test script. Four functions will be exported into your
 namespace: three for testing and one for reporting. They are detailed
 below."""
 
+import re
+
 nanoconf = { 'run':0,
              'pass':0,
              'deepstack':['root'],
@@ -106,9 +108,7 @@ will also be printed."""
     # set. fail if we find one.
     for k, v in nanoconf['deephash'].items():
         if v[1] == False:
-            nanoconf['error'] = True
-            nanoconf['errcode'] = "nomatchingiven"
-            nanoconf['errkey'] = k
+            _deep_set_err("nomatchingiven", k)
             _print_deep_fail_msg(msg, None, None)
             return
     # made it here? pass.
@@ -146,20 +146,32 @@ def _deep_build_hash(element, verify, msg):
             # same as our value here. unless 1 and 2, it's a fail.
             key = ".".join(nanoconf['deepstack'])
             if key not in nanoconf['deephash']:
-                nanoconf['error'] = True
-                nanoconf['errcode'] = "nomatchinexpr"
-                nanoconf['errkey'] = key
+                _deep_set_err("nomatchinexpr", key)
                 _print_deep_fail_msg(msg, None, None)
             else:
+                # first handle regexes if we're looking at one if not,
+                # do a simple comparison test. finally, pass if an
+                # error hasn't been seen.
+                #if (element):
+                #    pass
                 if nanoconf['deephash'][key][0] != element:
-                    nanoconf['error'] = True
-                    nanoconf['errcode'] = "badvalue"
-                    nanoconf['errkey'] = key
+                    _deep_set_err("badvalue", key)
                     _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
                 else:
                     nanoconf['deephash'][key][1] = True
         else:
             nanoconf['deephash'][".".join(nanoconf['deepstack'])] = [element, False]
+
+
+def _deep_regex_comp(key, element):
+    # 
+    pass
+
+
+def _deep_set_err(reason, key):
+    nanoconf['error'] = True
+    nanoconf['errcode'] = reason
+    nanoconf['errkey'] = key
 
 #-----------------------------------------------------------------------
     
