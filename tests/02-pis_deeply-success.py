@@ -19,6 +19,10 @@ pis(nanotest.nanoconf["error"], False, "no error (4)")
 struct = {'a':1, 'q':[11, 22, ('x', 'y'), 33], 'c':{'z':44}}
 pis_deeply(struct, struct, "identical blended composites")
 pis(nanotest.nanoconf["error"], False, "no error (5)")
+# regex
+struct = {'a':1, 'b':'4893 0393 2873 8937'}
+pis_deeply(struct, {'a':1, 
+                    'b':':re:4\d{3} \d{4} \d{4} \d{4}'}, "regex test")
 
 # end-of-run
 nanotest_summary();

@@ -6,7 +6,7 @@ is itself a tiny, fragmentary implementation of Perl's `Test::More`.
 
 *Don't complain that testing is too hard! Use nanotest and get to work!*
 
-nanotest-py is Python 3 only.
+nanotest-py requires Python 3.2+.
 
 ----
 

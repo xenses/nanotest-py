@@ -1,5 +1,10 @@
 nanotest-py Changelog
 
+1.1.2     07 Sep 2011
+
+          Given values in pis_deeply() tests can now be regexes, to
+          allow pattern-based comparison.
+
 1.1.1     22 Aug 2011
 
           bin/nanotest now has two command-line options: --quiet (only

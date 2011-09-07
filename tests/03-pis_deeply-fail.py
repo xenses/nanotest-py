@@ -130,6 +130,26 @@ pis(nanotest.nanoconf['errcode'],   "nomatchingiven", "error type was key not fo
 pis(nanotest.nanoconf['errkey'], "root.dict.q.list.2.tuple.2", "yeah, it was here")
 nanotest.nanoconf['pass'] += 1
 
+# regex failure
+struct = {'a':1, 'b':'4893 03q3 2873 8937'}
+regex = ':re:4\d{3} \d{4} \d{4} \d{4}'
+nanotest.nanoconf["silent"] = True
+pis_deeply(struct, {'a':1, 'b':regex}, "regex test")
+nanotest.nanoconf["silent"] = False
+pis(nanotest.nanoconf["pass"],               65, "No new tests passing after list fail")
+pis(nanotest.nanoconf["error"],           True, "error has been set")
+pis(nanotest.nanoconf['errcode'],   "renomatch", "error type was regex no match")
+pis(nanotest.nanoconf['errkey'],  "root.dict.b", "q isn't a digit")
+nanotest.nanoconf['pass'] += 1
+struct = {'a':1, 'b':'7893 0343 2873 8937'}
+nanotest.nanoconf["silent"] = True
+pis_deeply(struct, {'a':1, 'b':regex}, "regex test")
+nanotest.nanoconf["silent"] = False
+pis(nanotest.nanoconf["pass"],               70, "No new tests passing after list fail")
+pis(nanotest.nanoconf["error"],           True, "error has been set")
+pis(nanotest.nanoconf['errcode'],   "renomatch", "error type was regex no match")
+pis(nanotest.nanoconf['errkey'],  "root.dict.b", "7 isn't 4")
+nanotest.nanoconf['pass'] += 1
 
 # end-of-run
 nanotest_summary();
