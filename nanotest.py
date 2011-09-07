@@ -149,26 +149,30 @@ def _deep_build_hash(element, verify, msg):
                 _deep_set_err("nomatchinexpr", key)
                 _print_deep_fail_msg(msg, None, None)
             else:
-                # first handle regexes if we're looking at one if not,
-                # do a simple comparison test. finally, pass if an
-                # error hasn't been seen.
-                #if (element):
-                #    pass
-                if nanoconf['deephash'][key][0] != element:
+                # handle regexes if we're looking at one. if not, do a
+                # simple comparison test. finally, pass if no error
+                if re.match('\:re\:', element) != None:
+                    _deep_regex_comp(key, element)
+                elif nanoconf['deephash'][key][0] != element:
                     _deep_set_err("badvalue", key)
                     _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
-                else:
+                if not nanoconf['error']:
                     nanoconf['deephash'][key][1] = True
         else:
             nanoconf['deephash'][".".join(nanoconf['deepstack'])] = [element, False]
 
 
 def _deep_regex_comp(key, element):
-    # 
-    pass
+    global nanoconf
+    if re.search(element, nanoconf['deephash'][key][0]):
+        return
+    else:
+        _deep_set_err("renomatch", key)
+        _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
 
 
 def _deep_set_err(reason, key):
+    global nanoconf
     nanoconf['error'] = True
     nanoconf['errcode'] = reason
     nanoconf['errkey'] = key
@@ -197,6 +201,8 @@ def _print_deep_fail_msg(msg, expr, given):
         print("   Node {} exists in given struct but not experimental struct".format(nanoconf['errkey']))
     elif nanoconf['errcode'] == "nomatchingiven":
         print("   Node {} exists in experimental struct but not given struct".format(nanoconf['errkey']))
+    elif nanoconf['errcode'] == "renomatch":
+        print("   Node {} does not match regex '{}'".format(nanoconf['errkey'], given))
 
 
 def nanotest_summary():
