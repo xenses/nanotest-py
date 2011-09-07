@@ -170,7 +170,7 @@ def _deep_build_hash(element, verify, msg):
 
 
 def _deep_regex_comp(key, element, msg):
-    if re.search(element[4:], nanoconf['deephash'][key][0]):
+    if re.search(element[4:], str(nanoconf['deephash'][key][0])):
         return
     else:
         _deep_set_err("renomatch", key)
