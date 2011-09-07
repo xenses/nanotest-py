@@ -151,7 +151,7 @@ def _deep_build_hash(element, verify, msg):
             else:
                 # handle regexes if we're looking at one. if not, do a
                 # simple comparison test. finally, pass if no error
-                if re.match('\:re\:', element) != None:
+                if re.match('\:re\:', str(element)) != None:
                     _deep_regex_comp(key, element)
                 elif nanoconf['deephash'][key][0] != element:
                     _deep_set_err("badvalue", key)
