@@ -45,7 +45,7 @@ pis() should be named is(), but 'is' is a keyword in Python.
 
 Takes 3 arguments: an experimental value, a given value, and a
 message. The first two can be any valid Python expression; the third
-should be a string.
+should be a message string.
 
 If the experimental and given values are equivalent, the test is a
 success and nothing happens. If they are different, the test is a
@@ -78,16 +78,23 @@ def pis_deeply(expr, given, msg):
 Like pis()and pisnt(), pis_deeply() takes three arguments: an
 experimental value, a given value, and a message. The first two should
 be composite data structures (lists, dictionaries, tuples), and they
-may be as deeply nested as you please. The third should be a string.
+may be as deeply nested as you please. The third should be a message
+string.
 
 The experimental and given structures will be tested for "congruence"
 (that is, they have the same structure and the same values at all
-endpoints of the structure). If they are not identical, the test fails
-and the message will be printed to STDOUT.
+endpoints of the structure). If they do not match, the test fails and
+the message will be printed to STDOUT.
 
 Since this comparison is more complex than the one performed by
 pis/nt(), additional information about the exact nature of the failure
-will also be printed."""
+will also be printed.
+
+In the given structure, any string value which begins with ':re:' will
+be treated as a regular expression to be tested against with re.search
+(after the prefix has been removed, of course). This allows testing
+for things whose exact value cannot be known in advance, but whose
+general format or basic parameters is established."""
     # reset state
     global nanoconf
     nanoconf['error'] = False
@@ -152,7 +159,7 @@ def _deep_build_hash(element, verify, msg):
                 # handle regexes if we're looking at one. if not, do a
                 # simple comparison test. finally, pass if no error
                 if re.match('\:re\:', str(element)) != None:
-                    _deep_regex_comp(key, element)
+                    _deep_regex_comp(key, element, msg)
                 elif nanoconf['deephash'][key][0] != element:
                     _deep_set_err("badvalue", key)
                     _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
@@ -162,9 +169,8 @@ def _deep_build_hash(element, verify, msg):
             nanoconf['deephash'][".".join(nanoconf['deepstack'])] = [element, False]
 
 
-def _deep_regex_comp(key, element):
-    global nanoconf
-    if re.search(element, nanoconf['deephash'][key][0]):
+def _deep_regex_comp(key, element, msg):
+    if re.search(element[4:], nanoconf['deephash'][key][0]):
         return
     else:
         _deep_set_err("renomatch", key)
