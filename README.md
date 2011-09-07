@@ -10,12 +10,6 @@ nanotest-py requires Python 3.2+.
 
 ----
 
-Development HEAD is not guaranteed to be complete, or even in working
-order. Stick to tagged releases (downloadable at Github) if you are
-not comfortable with this.
-
-----
-
 This package includes `nanotest.py`, which is the test library proper,
 and `nanotest`, a script which acts as the test harness/runner.
 
@@ -28,8 +22,8 @@ Installation is standard:
 
     python setup.py install
 
-See `pydoc nanotest` for details on use and how to write test scripts
-and `nanotest --help` for information on the runner/harness script.
+See `pydoc nanotest` for details on how to write test scripts and
+`nanotest --help` for information on how to run tests.
 
 For more information or to contact me, see the [module
 homepage](https://github.com/firepear/nanotest-py/)
