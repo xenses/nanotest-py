@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup( name = "nanotest",
-       version = "1.1.1",
+       version = "1.1.2",
        description = "Tiny testing toolkit (for Python)",
        author = "Shawn Boyette",
        author_email = "shawn@firepear.net",
