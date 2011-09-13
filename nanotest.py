@@ -115,7 +115,7 @@ general format or basic parameters is established."""
     # set. fail if we find one.
     for k, v in nanoconf['deephash'].items():
         if v[1] == False:
-            _deep_set_err("nomatchingiven", k)
+            _set_err("nomatchingiven", k)
             _print_deep_fail_msg(msg, None, None)
             return
     # made it here? pass.
@@ -147,37 +147,39 @@ def _deep_build_hash(element, verify, msg):
         nanoconf['deepstack'].pop()
     else:
         # leafnodes handled here
+        key = ".".join(nanoconf['deepstack'])
         if verify:
-            # in verify mode we build the element's key and check that
-            # (1) it exists in deephash and (2) its value there is the
-            # same as our value here. unless 1 and 2, it's a fail.
-            key = ".".join(nanoconf['deepstack'])
+            # make sure our key is in the expr hash
             if key not in nanoconf['deephash']:
-                _deep_set_err("nomatchinexpr", key)
+                _set_err("nomatchinexpr", key)
                 _print_deep_fail_msg(msg, None, None)
             else:
-                # handle regexes if we're looking at one. if not, do a
-                # simple comparison test. finally, pass if no error
+                # handle regexes if we're looking at one. 
                 if re.match('\:re\:', str(element)) != None:
-                    _deep_regex_comp(key, element, msg)
+                    _regex_comp(key, element, msg)
+                    if nanoconf['error']:
+                        _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
+                # no, it's a regular comparison
                 elif nanoconf['deephash'][key][0] != element:
-                    _deep_set_err("badvalue", key)
+                    _set_err("badvalue", key)
                     _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
+                # regardless, set seen flag if we haven't failed
                 if not nanoconf['error']:
                     nanoconf['deephash'][key][1] = True
         else:
-            nanoconf['deephash'][".".join(nanoconf['deepstack'])] = [element, False]
+            nanoconf['deephash'][key] = [element, False]
 
 
-def _deep_regex_comp(key, element, msg):
-    if re.search(element[4:], str(nanoconf['deephash'][key][0])):
-        return
+def _regex_comp(key, given, msg):
+    expr = nanoconf['deephash'][key][0]
+    if re.search(given[4:], str(expr)):
+        return True
     else:
-        _deep_set_err("renomatch", key)
-        _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
+        _set_err("renomatch", key)
+        return False
 
 
-def _deep_set_err(reason, key):
+def _set_err(reason, key):
     global nanoconf
     nanoconf['error'] = True
     nanoconf['errcode'] = reason
