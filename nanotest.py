@@ -114,16 +114,17 @@ general format or basic parameters is established."""
     # run hash function over given structure, in verify mode
     _deep_build_hash(given, True, msg)
     if nanoconf['error']:
-        return
+        return False
     # iterate over expr dict for elements whose seen flag is not
     # set. fail if we find one.
     for k, v in nanoconf['deephash'].items():
         if v[1] == False:
             _set_err(reason="nomatchingiven", key=k)
             _print_deep_fail_msg(msg, None, None)
-            return
+            return False
     # made it here? pass.
     nanoconf['pass'] += 1
+    return True
 
 
 def _deep_build_hash(element, verify, msg):
