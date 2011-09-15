@@ -54,8 +54,10 @@ failure and the message will be printed to STDOUT.
     global nanoconf
     if _is_core(expr, given):
         nanoconf['pass'] += 1
+        return True
     else:
         _print_is_fail_msg(expr, given, msg, False)
+        return False
 
 def pisnt(expr, given, msg):
     """Test for difference.
@@ -67,8 +69,10 @@ experimental and the given values are NOT equivalent."""
     global nanoconf
     if not _is_core(expr, given):
         nanoconf['pass'] = nanoconf['pass'] + 1
+        return True
     else:
         _print_is_fail_msg(expr, given, msg, True)
+        return False
 
 #-----------------------------------------------------------------------
 
@@ -177,16 +181,14 @@ def _regex_comp(key, given, msg):
         _set_err(reason="renomatch", key=key)
         return False
 
-
+#-----------------------------------------------------------------------
+    
 def _set_err(**kw):
-#def _set_err(reason, key):
     global nanoconf
     nanoconf['error'] = True
     nanoconf['errcode'] = kw['reason']
     nanoconf['errkey'] = kw['key']
 
-#-----------------------------------------------------------------------
-    
 def _print_is_fail_msg(expr, given, msg, invert):
     if nanoconf['silent']:
         return
