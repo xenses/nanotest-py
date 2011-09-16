@@ -171,7 +171,7 @@ def _deep_build_hash(element, verify, msg):
             else:
                 # handle regexes if we're looking at one. 
                 if re.match('\:re\:', str(element)) != None:
-                    if not _regex_comp(expr=nanoconf['deephash'][key][0], given=element):
+                    if not _regex_comp(expr=nanoconf['deephash'][key][0], given=element, key=key):
                         _print_re_fail_msg(msg, nanoconf['deephash'][key], element)
                 # no, it's a regular comparison
                 elif nanoconf['deephash'][key][0] != element:
@@ -210,6 +210,8 @@ def _print_is_fail_msg(expr, given, msg, invert):
         print("   Got     : '{}'".format(expr))
 
 def _print_re_fail_msg(msg, expr, given):
+    if nanoconf['silent']:
+        return
     print("   Node {} ({}) does not match regex '{}'".format(nanoconf['errkey'], expr, given))
 
 
