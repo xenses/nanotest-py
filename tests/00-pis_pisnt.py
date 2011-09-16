@@ -18,7 +18,27 @@ nanotest.nanoconf["silent"] = True
 pisnt(1, 1, "pisnt() failure: Of course one equals one.");
 nanotest.nanoconf["silent"] = False
 pis(nanotest.nanoconf["pass"], 7, "7 tests passing after pisnt fail")
-nanotest.nanoconf["pass"] += 2; # smooth over failing tests, which we will treat as passing:)
+nanotest.nanoconf["run"] -= 2; # smooth over failing tests, which we will treat as passing:)
+
+# make sure tests return values
+pis( pis(1,1,1), True, 'should return True')
+nanotest.nanoconf["silent"] = True
+pis( pis(1,0,0), False, 'should return False')
+nanotest.nanoconf["silent"] = False
+pis( pisnt(1,0,1), True, 'should return True')
+nanotest.nanoconf["silent"] = True
+pis( pisnt(1,1,0), False, 'should return False')
+nanotest.nanoconf["silent"] = False
+nanotest.nanoconf["run"] -= 2; # smooth over failing inner tests, which we will treat as passing:)
+
+# check regexes
+nanotest.nanoconf["silent"] = True
+pis( pis(14,':re:^\d+$',1), True, "14 is all digits")
+pis( pis('14987t267',':re:^\d+$',0), False, 't is not a digit')
+pis( pisnt('14987t267',':re:^\d+$',1), True, 't is not a digit (pisnt)')
+pis( pisnt('14987267',':re:^\d+$',0), False, '2 is a digit')
+nanotest.nanoconf["silent"] = False
+nanotest.nanoconf["run"] -= 4; # smooth over failing inner tests, which we will treat as passing:)
 
 # end-of-run
 nanotest_summary();
