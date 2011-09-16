@@ -38,7 +38,7 @@ pis( pis('14987t267',':re:^\d+$',0), False, 't is not a digit')
 pis( pisnt('14987t267',':re:^\d+$',1), True, 't is not a digit (pisnt)')
 pis( pisnt('14987267',':re:^\d+$',0), False, '2 is a digit')
 nanotest.nanoconf["silent"] = False
-nanotest.nanoconf["run"] -= 4; # smooth over failing inner tests, which we will treat as passing:)
+nanotest.nanoconf["run"] -= 2; # smooth over failing inner tests, which we will treat as passing:)
 
 # end-of-run
 nanotest_summary();
