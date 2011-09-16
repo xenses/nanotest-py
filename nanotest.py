@@ -26,7 +26,7 @@ nanoconf = { 'run':0,
              'deepstack':['root'],
              'deephash':{},
              'error':False,
-             'errmode':None,
+             'errcode':None,
              'errkey':None,
              'quiet':False,
              'silent':False, }
@@ -35,7 +35,7 @@ def _is_core(expr, given):
     global nanoconf
     nanoconf['run'] += 1
     if re.match('\:re\:', str(given)) != None:
-        if _regex_comp(expr, given):
+        if _regex_comp(expr=expr, given=given):
             return True
     else:
         if expr == given:
@@ -60,10 +60,10 @@ failure and the message will be printed to STDOUT.
     if  passed:
         nanoconf['pass'] += 1
     else:
-        if nanoconf['errmode'] == 'renomatch':
-            _print_re_fail_msg(msg, nanoconf['deephash'][key], element)
+        if nanoconf['errcode'] == 'renomatch':
+            _print_re_fail_msg(msg=msg, expr=expr, given=given)
         else:
-            _print_is_fail_msg(expr, given, msg, False)
+            _print_is_fail_msg(expr=expr, given=given, msg=msg)
     return passed
 
 def pisnt(expr, given, msg):
@@ -78,10 +78,10 @@ experimental and the given values are NOT equivalent."""
     if  passed:
         nanoconf['pass'] = nanoconf['pass'] + 1
     else:
-        if nanoconf['errmode'] == 'renomatch':
-            _print_re_fail_msg(msg, nanoconf['deephash'][key], element)
+        if nanoconf['errcode'] == 'renomatch':
+            _print_re_fail_msg(msg=msg, expr=expr, given=given, pisnt=True)
         else:
-            _print_is_fail_msg(expr, given, msg, True)
+            _print_is_fail_msg(expr=expr, given=given, msg=msg, pisnt=True)
     return passed
 
 #-----------------------------------------------------------------------
@@ -172,7 +172,7 @@ def _deep_build_hash(element, verify, msg):
                 # handle regexes if we're looking at one. 
                 if re.match('\:re\:', str(element)) != None:
                     if not _regex_comp(expr=nanoconf['deephash'][key][0], given=element, key=key):
-                        _print_re_fail_msg(msg, nanoconf['deephash'][key], element)
+                        _print_deep_re_fail_msg(msg, nanoconf['deephash'][key], element)
                 # no, it's a regular comparison
                 elif nanoconf['deephash'][key][0] != element:
                     _set_err(reason="badvalue", errkey=key)
@@ -192,27 +192,39 @@ def _regex_comp(key=None, **kw):
         return False
 
 #-----------------------------------------------------------------------
-    
+
+# _set_err - housekeeping
+# keywords: reason (code), errkey (deephash key or None)
 def _set_err(**kw):
     global nanoconf
     nanoconf['error'] = True
     nanoconf['errcode'] = kw['reason']
     nanoconf['errkey'] = kw['errkey']
 
-def _print_is_fail_msg(expr, given, msg, invert):
-    if nanoconf['silent']:
-        return
-    print("FAILED test {}: {}".format(nanoconf['run'], msg))
-    if invert:
-        print("   Expected anything but '{}' and got it anyway".format(given))
-    else:
-        print("   Expected: '{}'".format(given))
-        print("   Got     : '{}'".format(expr))
 
-def _print_re_fail_msg(msg, expr, given):
+# _print_is_fail_msg - pis/pisnt nonregex failure
+# keywords: expr, given, msg, pisnt
+def _print_is_fail_msg(pisnt=False, **kw):
     if nanoconf['silent']:
         return
-    print("   Node {} ({}) does not match regex '{}'".format(nanoconf['errkey'], expr, given))
+    print("FAILED test {}: {}".format(nanoconf['run'], kw['msg']))
+    if pisnt:
+        print("   Expected anything but '{}' and got it anyway".format(kw['given']))
+    else:
+        print("   Expected: '{}'".format(kw['given']))
+        print("   Got     : '{}'".format(kw['expr']))
+
+
+# _print_is_fail_msg - pis/pisnt regex failure
+# keywords: expr, given, msg, pisnt
+def _print_re_fail_msg(pisnt=False, **kw):
+    if nanoconf['silent']:
+        return
+    print("FAILED test {}: {}".format(nanoconf['run'], kw['msg']))
+    if pisnt:
+        print("   Didn't expect '{}' to match regex '{}', but it does".format(kw['expr'], kw['given']))
+    else:
+        print("   '{}' does not match regex '{}'".format(kw['expr'], kw['given']))
 
 
 def _print_deep_fail_msg(msg, expr, given):
@@ -226,6 +238,13 @@ def _print_deep_fail_msg(msg, expr, given):
         print("   Node {} exists in given struct but not experimental struct".format(nanoconf['errkey']))
     elif nanoconf['errcode'] == "nomatchingiven":
         print("   Node {} exists in experimental struct but not given struct".format(nanoconf['errkey']))
+
+
+def _print_deep_re_fail_msg(msg, expr, given):
+    if nanoconf['silent']:
+        return
+    print("FAILED test {}: {}".format(nanoconf['run'], msg))
+    print("   Node {} ({}) does not match regex '{}'".format(nanoconf['errkey'], expr, given))
 
 
 def nanotest_summary():
