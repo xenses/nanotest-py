@@ -21,8 +21,11 @@ failfiles  = 0
 
 
 def test_script_fail_abort(f, results):
-    print(results[1])
-    print("\n>>>\n>>>\n>>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
+    if not args.silent:
+        print(results[1])
+        print("\n>>> ABORT\n>>> ABORT\n>>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
+    if results[0] > 255:
+        sys.exit(113)
     sys.exit(int(results[0]))
 
 
