@@ -58,6 +58,54 @@ informed you that a test script blew up, and it is aborting the run.)
 What's a test script?
 ---------------------
 
+nanotest-py test scripts are just Python programs. The basic skeleton
+is:
+
+```
+  from nanotest import *
+
+  # code and tests go here
+
+  nanotest_summary()
+```
+
+The `import` line will put 4 functions in your namespace: `pis()`,
+`pisnt()`, `pis_deeply()`, and `nanotest_summary()`. The first three
+are the actual test functions of nanotest. The last is a simple
+reporting function which outputs the script results to the test
+harness.
+
+This function, `nanotest_summary()`, is called on the last line of a
+test script. For accurate reporting of results, it must be the last
+thing that happens in a test script.
+
+In the middle go the tests, and whatever setup and/or teardown code is
+needed for those tests. There are no restrictions or prescriptions of
+any sort. It's not even required that a test script actually call any
+of the testing functions, though this isn't going to do much to help
+ensure that software is operating correctly.
+
+
+What's a test suite?
+--------------------
+
+Simply a collection of one or more test scripts. Using nanotest itself
+as an example, the test suite is made of 4 scripts:
+
+* tests/00-pis_pisnt.py
+* tests/01-pis_deeply-hashing.py
+* tests/02-pis_deeply-success.py
+* tests/03-pis_deeply-fail.py
+
+Each of these scripts contains tests which exercise a specific bit of
+the library's functionality. The first tests the `pis` and `pisnt`
+functions. The second tests the hashing algorithm which drives the
+`pis_deeply` function. The third does positive (successful tests)
+testing of `pis_deeply` itself. The fourth tests `pis_deeply` in its
+failure modes.
+
+There's no right or wrong way to construct a test suite, but this sort
+of division is fairly typical.
 
 
 How to write tests
