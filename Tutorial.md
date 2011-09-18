@@ -26,15 +26,16 @@ executed, a summary of all tests will be printed.
 If you want less output, use the `--quiet` option. If you want no
 output at all, use `--silent` instead.
 
-nanotest will always exit with a code of 1 if any tests fail. If a
-script aborts, its exit code will be passed along.
+nanotest will exit with a code of 1 if any tests fail. If a test
+script aborts, its exit code will be passed along and nanotest will
+exit with that same code.
 
-(Except for codes above 255, which the POSIX spec says will be
-reported as their value mod 256. nanotest will print the actual value
+(Except for codes above 255, which are reported by the shell as their
+value mod 256. In these cases, nanotest will print the actual value
 for you and then force the return code to 113. Interestingly, Python
 itself tends to abort with a code of 256, which would result in a code
-of 0 (success!) being reported by bash after nanotest would say
-otherwise.)
+of 0 -- success! -- being reported by bash after nanotest has just
+informed you that a test script blew up, and it is aborting the run.)
 
 
 What's a test script?
