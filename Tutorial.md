@@ -1,8 +1,11 @@
 nanotest-py Tutorial
 ====================
 
-nanotest is a lightweight, easy-to-use software testing library. If
-you understand what that means, skip ahead to the next section header.
+nanotest is a lightweight, easy-to-use software testing library. This
+document describes how to use the `nanotest` harness to run test
+suites, and the general use of the `nanotest.py` library to write test
+suites. Please see `pydoc nanotest` for detailed information on the
+functions contained in the nanotest library.
 
 
 How to use nanotest-py
