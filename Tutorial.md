@@ -26,6 +26,20 @@ printed to the console. After each script completes, a summary of
 passing and failing tests will be printed. After all scripts have been
 executed, a summary of all tests will be printed.
 
+```
+  # a run of nanotest's own test suite
+  $ nanotest
+  Begin run: searching for modules and tests.
+     ./tests/00-pis_pisnt.py: 20/20 passing; ok
+     ./tests/01-pis_deeply-hashing.py: 68/68 passing; ok
+     ./tests/02-pis_deeply-success.py: 11/11 passing; ok
+     ./tests/03-pis_deeply-fail.py: 60/60 passing; ok
+  End of run
+     Tests passing: 159/159, in 4 script(s)
+  Success
+  $
+```
+
 If you want less output, use the `--quiet` option. If you want no
 output at all, use `--silent` instead.
 
