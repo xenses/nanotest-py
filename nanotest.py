@@ -54,6 +54,10 @@ should be a message string.
 If the experimental and given values are equivalent, the test is a
 success and nothing happens. If they are different, the test is a
 failure and the message will be printed to STDOUT.
+
+The given value may be a string in the form of ':re:PATTERN', which
+will cause a regex evaluation of the experimental value against
+PATTERN instead of a bare equivalance check.
 """
     global nanoconf
     passed = _is_core(expr, given)
@@ -104,11 +108,8 @@ Since this comparison is more complex than the one performed by
 pis/nt(), additional information about the exact nature of the failure
 will also be printed.
 
-In the given structure, any string value which begins with ':re:' will
-be treated as a regular expression to be tested against with re.search
-(after the prefix has been removed, of course). This allows testing
-for things whose exact value cannot be known in advance, but whose
-general format or basic parameters is established."""
+Any value in the given struct may be a regex string as described in
+the pydoc for pis()."""
     # reset state
     global nanoconf
     nanoconf['error'] = False
