@@ -82,7 +82,7 @@ used as such, but it can also poke at the internals of objects,
 examine program state variables, and generally inspect anything that a
 programmer can get a handle on at any point in a program's life.
 
-==== Examples
+### Examples
 
 Here are some simple examples of `pis()` and `pisnt()`.
 
