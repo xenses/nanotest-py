@@ -62,7 +62,7 @@ How to write tests
 Tests in nanotest-py are simply calls to `pis()`, `pisnt()`, or
 `pis_deeply()`. This makes it easy to write tests as you code. Anytime
 you add new code, correct a bug, or refactor something, that's a good
-time to write a test.
+time to write a test (or, if you have a test suite, to rerun it).
 
 All three functions take three arguments, in the same order:
 
@@ -131,6 +131,41 @@ FAILED test 6: these don't match either
    Values at root.dict.q.list.2.tuple.1 don't match
    Expected 'y'; got 'q'
 False
+```
+### Regexes
+
+The above examples show how to use nanotest to test for simple, rigid
+equivalence. But frequently, in the real world, we cannot know exactly
+what our data will be. We may know only that a value must be
+numeric. We may know that a value must be of a certain form, like a
+phone number.
+
+To enable these kinds of comparisons in tests, nanotest checks to see
+if its given value is a string which begins with `:re:`. If it is, the
+remainder of the string is used as a regex which the experimental
+value is tested against.
+
+```
+>>> pis('4873 2767 0909 2763', ':re:4\d{3} \d{4} \d{4} \d{4}', "visa number")
+True
+>>> pisnt("Agamemnon Q. Huxtable", ':re:\d', "No numbers allowed in names")
+True
+```
+
+This is also allowed with any and all values in the given struct of a
+`pis_deeply()` call.
+
+```
+>>> # set up a string that matches a v4 (random) uuid
+... v4uuid = ':re:[\0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'
+>>>
+>>> # now mock up an object containing a random UUID
+... exp_val = { 'a':1, 'b':2, 'c':uuid.uuid4() }
+>>> exp_val
+{'a': 1, 'c': UUID('0c490083-47b0-4462-a1fb-af6a593dc3fd'), 'b': 2}
+>>>
+>>> pis_deeply(exp_val, {'a':1, 'b':2, 'c':v4uuid}, "c will match using the stored regex")
+True
 ```
 
 
