@@ -176,7 +176,7 @@ def _deep_build_hash(element, verify, msg):
                 # no, it's a regular comparison
                 elif nanoconf['deephash'][key][0] != element:
                     _set_err(reason="badvalue", errkey=key)
-                    _print_deep_fail_msg(msg, nanoconf['deephash'][key], element)
+                    _print_deep_fail_msg(msg, nanoconf['deephash'][key][0], element)
                 # regardless, set seen flag if we haven't failed
                 if not nanoconf['error']:
                     nanoconf['deephash'][key][1] = True
