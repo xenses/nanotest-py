@@ -51,7 +51,11 @@ for test in testfiles:
         test_script_fail_abort(test, results)
     # script was ok. pull test counts off results
     reslist = results[1].split("\n")
-    trun, tpass = reslist[-1].split();
+    try:
+        trun, tpass = reslist[-1].split();
+    except ValueError:
+        print("\n>>> ABORT: Test script {} returned nothing. Did you call nanotest_summary()?".format(test))
+        sys.exit(1)
     reslist.pop()
     # add counts to totals
     tests_run += int(trun)
