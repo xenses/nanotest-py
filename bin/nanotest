@@ -8,7 +8,7 @@ import sys
 parser = argparse.ArgumentParser(description="Find any and all files '{...}/tests/*py' in the current subtree and run them as nanotest-py tests.")
 parser.add_argument("-q", "--quiet", action="store_true", help="Only print error output")
 parser.add_argument("-s", "--silent", action="store_true", help ="Print nothing at all")
-parser.add_argument("-v", '--version', action='version', version='%(prog)s 1.1.4')
+parser.add_argument("-v", '--version', action='version', version='%(prog)s 1.1.5')
 args = parser.parse_args()
 if args.silent:
     args.quiet = True

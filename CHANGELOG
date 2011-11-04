@@ -1,5 +1,10 @@
 nanotest-py Changelog
 
+1.1.5     04 Nov 2011
+
+          nanotest now aborts and tries to be helpful when it looks
+          like a test script didn't call nanotest_summary()
+
 1.1.4     15 Sep 2011
 
           Regexes can now be used on the given (right-hand) side of
