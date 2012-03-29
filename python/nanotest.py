@@ -148,7 +148,7 @@ def _deep_build_hash(element, verify, msg):
             # dict
             nanoconf['deepstack'].append('dict')
             for key in sorted(element.keys()):
-                nanoconf['deepstack'].append(key)
+                nanoconf['deepstack'].append(str(key))
                 _deep_build_hash(element[key], verify, msg)
                 nanoconf['deepstack'].pop()
         else:

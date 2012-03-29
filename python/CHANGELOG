@@ -1,5 +1,10 @@
 nanotest-py Changelog
 
+1.1.6     29 Mar 2012
+
+          Fixed bug where dictionaries with integer keys would crash
+          nanotest.
+
 1.1.5     04 Nov 2011
 
           nanotest now aborts and tries to be helpful when it looks

@@ -67,11 +67,11 @@ pis("root.dict.c" in nanotest.nanoconf["deephash"],  False, "dict elem c doesn't
 # blended
 nanotest.nanoconf["deepstack"] = ["root"]
 nanotest.nanoconf["deephash"]  = {}
-struct = {'a':1, 'q':[11, 22, ('x', 'y'), 33], 'c':{'z':44}}
+struct = {'a':1, 'q':[11, 22, ('x', 'y'), 33], 'c':{'z':44}, '9':'int'}
 nanotest._deep_build_hash(struct, False, "msg")
 pis(len(nanotest.nanoconf["deepstack"]),        1, "should *still* be one element, due to popping")
 pis(nanotest.nanoconf["deepstack"],      ["root"], "that element should *still* be 'root'")
-pis(len(nanotest.nanoconf["deephash"]) ,        7, "seven elements now in hash")
+pis(len(nanotest.nanoconf["deephash"]) ,        8, "seven elements now in hash")
 pis("root.dict.a" in nanotest.nanoconf["deephash"],   True, "elem dict.a")
 pis(nanotest.nanoconf["deephash"]["root.dict.a"][0],     1, "elem dict.a[0] is '1'")
 pis(nanotest.nanoconf["deephash"]["root.dict.a"][1], False, "elem dict.a[1] is 'False'")
@@ -93,6 +93,8 @@ pis(nanotest.nanoconf["deephash"]["root.dict.q.list.2.tuple.0"][1], False, "elem
 pis("root.dict.q.list.2.tuple.1" in nanotest.nanoconf["deephash"],   True, "elem dict.c.dict.q.list.2.tuple.1")
 pis(nanotest.nanoconf["deephash"]["root.dict.q.list.2.tuple.1"][0],   'y', "elem dict.c.dict.q.list.2.tuple.1[0] is 'y'")
 pis(nanotest.nanoconf["deephash"]["root.dict.q.list.2.tuple.1"][1], False, "elem dict.c.dict.q.list.2.tuple.1[1] is 'False'")
+pis("root.dict.9" in nanotest.nanoconf["deephash"],   True, "elem dict.9")
+pis(nanotest.nanoconf["deephash"]["root.dict.9"][0], "int", "elem dict.9[0] is 'int'")
 
 # end-of-run
 nanotest_summary();
