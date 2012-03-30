@@ -1,29 +1,32 @@
-nanotest-py
-===========
+nanotest
+========
 
-A reimplementation of `nanotest.js` from my Javascript library, which
-is itself a tiny, fragmentary implementation of Perl's `Test::More`.
+A tiny testing toolkit, inspired by Perl's `Test::More` and
+`Test::Harness`.
+
+* Not xUnit style -- tests are function calls, not classes
+* Very simple -- only 4 functions in the whole library
+* Powerful -- value comparisons can be tested against regexes
+* Powerful-er -- arbitrary data structures can be tested for congruence
 
 *Don't complain that testing is too hard! Use nanotest and get to work!*
 
-nanotest-py requires Python 3.2+.
 
-----
+Implementations
+---------------
 
-This package includes `nanotest.py`, which is the test library proper,
-and `nanotest`, a script which acts as the test harness/runner.
+There are currently two implementations of nanotest: Python and
+Javascript.
 
-If you want to run the package's own tests before installation, feel
-free:
+Despite having been written first, the Javascript implementation is
+currently very much a second-class citizen. It had been languishing in
+another repo instead of living here alongside its brother, so it was
+easy to ignore. I will bring the js implementation up to parity before
+long, I promise :)
 
-    ./bin/nanotest
 
-Installation is standard:
-
-    python setup.py install
-
-See `pydoc nanotest` for details on how to write test scripts and
-`nanotest --help` for information on how to run tests.
+Contact
+-------
 
 For more information or to contact me, see the [module
 homepage](https://github.com/firepear/nanotest-py/)
