@@ -40,6 +40,17 @@ executed, a summary of all tests will be printed.
   $
 ```
 
+You can run selected test scripts instead of the whole suite, which is
+very handy for active development.
+
+```
+  # run just one script
+  nanotest tests/01-pis_deeply-hashing.py
+
+  # run two, in this order
+  nanotest tests/03-pis_deeply-fail.py tests/01-pis_deeply-hashing.py
+```
+
 If you want less output, use the `--quiet` option. If you want no
 output at all, use `--silent` instead.
 

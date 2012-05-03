@@ -1,5 +1,11 @@
 nanotest-py Changelog
 
+1.1.7     03 May 2012
+
+          The 'nanotest' runner/harness now takes a list of tests to
+          run as positional arguments, providing functionality
+          equivalent to that of Test::Harness's 'prove'
+
 1.1.6     29 Mar 2012
 
           Fixed bug where dictionaries with integer keys would crash
