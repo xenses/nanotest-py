@@ -8,16 +8,18 @@ import sys
 parser = argparse.ArgumentParser(description="Find any and all files '{...}/tests/*py' in the current subtree and run them as nanotest-py tests.")
 parser.add_argument("-q", "--quiet", action="store_true", help="Only print error output")
 parser.add_argument("-s", "--silent", action="store_true", help ="Print nothing at all")
-parser.add_argument("-v", '--version', action='version', version='%(prog)s 1.1.6')
+parser.add_argument("-v", '--version', action='version', version='%(prog)s 1.1.7')
+parser.add_argument('testfiles', metavar="TEST", nargs="*",  help="Execute only specified test files instead of searching tree")
 args = parser.parse_args()
 if args.silent:
     args.quiet = True
 
-tests_run    = 0
-tests_passed = 0
-pythonpath = ['./']
-testfiles  = []
-failfiles  = 0
+tests_run     = 0
+tests_passed  = 0
+pythonpath    = ['./']
+testfiles     = args.testfiles
+failfiles     = 0
+inittestcount = len(testfiles)
 
 
 def test_script_fail_abort(f, results):
@@ -28,18 +30,19 @@ def test_script_fail_abort(f, results):
         sys.exit(113)
     sys.exit(int(results[0]))
 
-
 if not args.quiet:
-    print("Begin run: searching for modules and tests.")
+    print("Begin run:",)
+    if inittestcount == 0: print("searching for modules and tests.")
 
 # walk pwd tree
 for root, dirs, files in os.walk("."):
     for f in sorted(files):
         if f[-3:] == ".py":
-            if root[-6:] == "/tests":
+            if root[-6:] == "/tests" and inittestcount == 0:
                 testfiles.append(os.path.join(root,f))
             else:
                 pythonpath.append(os.path.join(root,f))
+
 # build the PYTHONPATH value
 pypathstr = ":".join(pythonpath)
 
