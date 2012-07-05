@@ -29,4 +29,4 @@ Contact
 -------
 
 For more information or to contact me, see the [module
-homepage](https://github.com/firepear/nanotest-py/)
+homepage](https://github.com/firepear/nanotest/)
