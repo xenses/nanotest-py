@@ -48,7 +48,7 @@ pypathstr = ":".join(pythonpath)
 
 # now run each test found
 for test in testfiles:
-    results = subprocess.getstatusoutput("PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
+    results = subprocess.getstatusoutput("TERM=dumb PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
     # abort if the test script as a whole failed
     if results[0] != 0:
         test_script_fail_abort(test, results)
