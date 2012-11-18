@@ -1,5 +1,12 @@
 nanotest-py Changelog
 
+1.2.1	  17 Nov 2012
+
+	  Bugfix: setting TERM to 'dumb' is necessary under some
+	  emulators.
+
+	  Split repo back out.
+
 1.2.0     03 May 2012
 
           The 'nanotest' runner/harness now takes a list of tests to
