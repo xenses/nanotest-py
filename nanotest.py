@@ -7,7 +7,6 @@ class Nanotester:
         self.tests_total = 0
         self.tests_pass  = 0
         self.re_re   = re.compile("\:re\:")
-        #self.re_type = re.compile("\:ty\:")
 
     def test(self, xpmt, given):
         # all we do here is parcel out work to the appropriate helper
@@ -15,9 +14,6 @@ class Nanotester:
         if self.re_re.match(str(given)):
             # call _re_match
             pass
-        #if self.re_type.match(str(given)):
-        #    # call _type_match
-        #    pass
 
     def _is_eq(self, expr, given):
         if expr == given:
@@ -31,20 +27,7 @@ class Nanotester:
             _set_err(reason="renomatch", errkey=key)
             return False
 
-    #def _type_match(self):
-    #    pass
-
-    def _is_deeply(expr, given, msg):
-        # reset state
-        global nanoconf
-        nanoconf['error'] = False
-        nanoconf['errcode'] = None
-        nanoconf['errkey']  = None
-        nanoconf['run'] += 1
-        if len(nanoconf['deepstack']) > 1:
-            nanoconf['deepstack'] = ['root']
-        if len(nanoconf['deephash']) > 0:
-            nanoconf['deephash'] = {}
+    def _compare(expr, given, msg):
         # build dict of hashed expr structure.
         _deep_build_hash(expr, False, None)
         # run hash function over given structure, in verify mode
@@ -58,14 +41,9 @@ class Nanotester:
                 _set_err(reason="nomatchingiven", errkey=k)
                 _print_deep_fail_msg(msg, None, None)
                 return False
-        # made it here? pass.
-        nanoconf['pass'] += 1
         return True
 
-    def _deep_build_hash(element, verify, msg):
-        global nanoconf
-        if nanoconf['error']:
-            return
+    def _hash(element, verify, msg):
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
@@ -88,22 +66,3 @@ class Nanotester:
         else:
             # leafnodes handled here
             key = ".".join(nanoconf['deepstack'])
-            if verify:
-                # make sure our key is in the expr hash
-                if key not in nanoconf['deephash']:
-                    _set_err(reason="nomatchinexpr", errkey=key)
-                    _print_deep_fail_msg(msg, None, None)
-                else:
-                    # handle regexes if we're looking at one. 
-                    if re.match('\:re\:', str(element)) != None:
-                        if not _regex_comp(expr=nanoconf['deephash'][key][0], given=element, key=key):
-                            _print_deep_re_fail_msg(msg, nanoconf['deephash'][key][0], element)
-                    # no, it's a regular comparison
-                    elif nanoconf['deephash'][key][0] != element:
-                        _set_err(reason="badvalue", errkey=key)
-                        _print_deep_fail_msg(msg, nanoconf['deephash'][key][0], element)
-                    # regardless, set seen flag if we haven't failed
-                    if not nanoconf['error']:
-                        nanoconf['deephash'][key][1] = True
-            else:
-                nanoconf['deephash'][key] = [element, False]
