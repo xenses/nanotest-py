@@ -1,45 +1,27 @@
 import re
 
-class Nanotest:
+class Nanotester:
     """
     """
-    def __init__():
+    def __init__(self):
+        self.tests_total = 0
+        self.tests_pass  = 0
+        self.re_re   = re.compile("\:re\:")
+        self.re_type = re.compile("\:ty\:")
+
+    def test(self, xpmt, given):
+        # all we do here is parcel out work to the appropriate helper
+        # function and note the results
         pass
 
-    def _is_core(expr, given):
-        global nanoconf
-        nanoconf['run'] += 1
-        if re.match('\:re\:', str(given)) != None:
+    def _is_eq(self, expr, given):
+        if self.re_re.match(str(given)):
             if _regex_comp(expr=expr, given=given):
                 return True
         else:
             if expr == given:
                 return True
             return False
-
-    def _is(expr, given, msg):
-        global nanoconf
-        passed = _is_core(expr, given)
-        if  passed:
-            nanoconf['pass'] += 1
-        else:
-            if nanoconf['errcode'] == 'renomatch':
-                _print_re_fail_msg(msg=msg, expr=expr, given=given)
-            else:
-                _print_is_fail_msg(expr=expr, given=given, msg=msg)
-        return passed
-
-    def _isnt(expr, given, msg):
-        global nanoconf
-        passed = not _is_core(expr, given)
-        if  passed:
-            nanoconf['pass'] = nanoconf['pass'] + 1
-        else:
-            if nanoconf['errcode'] == 'renomatch':
-                _print_re_fail_msg(msg=msg, expr=expr, given=given, pisnt=True)
-            else:
-                _print_is_fail_msg(expr=expr, given=given, msg=msg, pisnt=True)
-        return passed
 
     def _is_deeply(expr, given, msg):
         # reset state
