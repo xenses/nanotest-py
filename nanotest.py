@@ -7,7 +7,7 @@ class Nanotester:
         self.tests_total = 0
         self.tests_pass  = 0
         self.re_re   = re.compile("\:re\:")
-        self.re_type = re.compile("\:ty\:")
+        #self.re_type = re.compile("\:ty\:")
 
     def test(self, xpmt, given):
         # all we do here is parcel out work to the appropriate helper
@@ -15,9 +15,9 @@ class Nanotester:
         if self.re_re.match(str(given)):
             # call _re_match
             pass
-        if self.re_type.match(str(given)):
-            # call _type_match
-            pass
+        #if self.re_type.match(str(given)):
+        #    # call _type_match
+        #    pass
 
     def _is_eq(self, expr, given):
         if expr == given:
@@ -31,8 +31,8 @@ class Nanotester:
             _set_err(reason="renomatch", errkey=key)
             return False
 
-    def _type_match(self):
-        pass
+    #def _type_match(self):
+    #    pass
 
     def _is_deeply(expr, given, msg):
         # reset state
