@@ -12,16 +12,27 @@ class Nanotester:
     def test(self, xpmt, given):
         # all we do here is parcel out work to the appropriate helper
         # function and note the results
-        pass
+        if self.re_re.match(str(given)):
+            # call _re_match
+            pass
+        if self.re_type.match(str(given)):
+            # call _type_match
+            pass
 
     def _is_eq(self, expr, given):
-        if self.re_re.match(str(given)):
-            if _regex_comp(expr=expr, given=given):
-                return True
+        if expr == given:
+            return True
+        return False
+
+    def _re_match(key=None, **kw):
+        if re.search(kw['given'][4:], str(kw['expr'])):
+            return True
         else:
-            if expr == given:
-                return True
+            _set_err(reason="renomatch", errkey=key)
             return False
+
+    def _type_match(self):
+        pass
 
     def _is_deeply(expr, given, msg):
         # reset state
@@ -96,10 +107,3 @@ class Nanotester:
                         nanoconf['deephash'][key][1] = True
             else:
                 nanoconf['deephash'][key] = [element, False]
-
-    def _regex_comp(key=None, **kw):
-        if re.search(kw['given'][4:], str(kw['expr'])):
-            return True
-        else:
-            _set_err(reason="renomatch", errkey=key)
-            return False
