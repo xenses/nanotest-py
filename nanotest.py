@@ -8,33 +8,31 @@ class Nanotester:
         self.tests_pass  = 0
         self.re_re   = re.compile("\:re\:")
 
-    def test(self, xpmt, given):
+    def test(self, xpmtl, given):
         # all we do here is parcel out work to the appropriate helper
         # function and note the results
         if self.re_re.match(str(given)):
             # call _re_match
             pass
 
-    def _is_eq(self, expr, given):
-        if expr == given:
+    def _is_eq(self, xpmtl, given):
+        if xpmtl == given:
             return True
         return False
 
-    def _re_match(key=None, **kw):
-        if re.search(kw['given'][4:], str(kw['expr'])):
+    def _re_match(self, xpmtl, given):
+        if re.search(kw['given'][4:], str(kw['xpmtl'])):
             return True
         else:
             _set_err(reason="renomatch", errkey=key)
             return False
 
-    def _compare(expr, given, msg):
-        # build dict of hashed expr structure.
-        _deep_build_hash(expr, False, None)
+    def _compare(self, xpmtl, given):
+        # build dict of hashed xpmtl structure.
+        self.xhash = self._hash(xpmtl)
         # run hash function over given structure, in verify mode
-        _deep_build_hash(given, True, msg)
-        if nanoconf['error']:
-            return False
-        # iterate over expr dict for elements whose seen flag is not
+        self.ghash = self._hash(given)
+        # iterate over xpmtl dict for elements whose seen flag is not
         # set. fail if we find one.
         for k, v in nanoconf['deephash'].items():
             if v[1] == False:
@@ -43,26 +41,27 @@ class Nanotester:
                 return False
         return True
 
-    def _hash(element, verify, msg):
+    def _hash(self, element):
+        nodestack = []
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
                 # dict
-                nanoconf['deepstack'].append('dict')
+                nodestack.append('dict')
                 for key in sorted(element.keys()):
-                    nanoconf['deepstack'].append(str(key))
+                    nodestack.append(str(key))
                     _deep_build_hash(element[key], verify, msg)
-                    nanoconf['deepstack'].pop()
+                    nodestack.pop()
             else:
                 if isinstance(element, (list,)):
-                    nanoconf['deepstack'].append('list')
+                    nodestack.append('list')
                 else:
-                    nanoconf['deepstack'].append('tuple')
+                    nodestack.append('tuple')
                 for idx, subelem in enumerate(element):
-                    nanoconf['deepstack'].append(str(idx))
+                    nodestack.append(str(idx))
                     _deep_build_hash(subelem, verify, msg)
-                    nanoconf['deepstack'].pop()
-            nanoconf['deepstack'].pop()
+                    nodestack.pop()
+            nodestack.pop()
         else:
             # leafnodes handled here
-            key = ".".join(nanoconf['deepstack'])
+            key = ".".join(nodestack)
