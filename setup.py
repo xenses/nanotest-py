@@ -9,4 +9,4 @@ setup( name = "nanotest",
        author_email = "shawn@firepear.net",
        url = "https://github.com/firepear/nanotest-py",
        py_modules=["nanotest"],
-       scripts=['bin/nanotest'] )
+       scripts=['bin/nanotest-py'] )
