@@ -1,19 +1,42 @@
+import inspect
 import re
 
 class Nanotester:
     """
     """
     def __init__(self):
-        self.tests_total = 0
-        self.tests_pass  = 0
+        self.testnum = 0
+        self.results = []
         self.re_re   = re.compile("\:re\:")
 
-    def test(self, xpmtl, given):
-        # all we do here is parcel out work to the appropriate helper
-        # function and note the results
+    def test(self, xpmtl, given, msg):
+        self.testnum += 1
+        if type(xpmtl) != type(given):
+                self.results.append(self._result(type(given), type(xpmtl), False, msg, "Types don't match"))
+        if isinstance(xpmtl, (tuple, list, dict)):
+            # build hashes, etc
+            pass
         if self.re_re.match(str(given)):
             # call _re_match
             pass
+
+    def _result(self, given, xpmtl, success, msg, *args):
+        res = {}
+        if len(args) > 0:
+            res['reason'] = args[0]
+        else:
+            res['reason'] = None
+        # get filename, line num, stuff
+        context = inspect.getouterframes(inspect.getcurrentframe())[1]
+        # frame, filename, linenum, function_name, lines, index
+        res['test']     = self.testnum
+        res['filename'] = context[1]
+        res['linenum']  = context[2]
+        res['pass']     = success
+        res['expected'] = given
+        res['got']      = xpmtl
+        res['msg']      = msg
+        return res
 
     def _is_eq(self, xpmtl, given):
         if xpmtl == given:
