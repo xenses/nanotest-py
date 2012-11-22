@@ -14,56 +14,35 @@ args = parser.parse_args()
 if args.silent:
     args.quiet = True
 
-tests_run     = 0
-tests_passed  = 0
-pythonpath    = ['./']
+sys.path.append('./')
 testfiles     = args.testfiles
-failfiles     = 0
 inittestcount = len(testfiles)
 
-
-def test_script_fail_abort(f, results):
-    if not args.silent:
-        print(results[1])
-        print("\n>>> ABORT\n>>> ABORT\n>>> ABORT: Test script {} ended with nonzero status ({}); halting test run".format(f, results[0]))
-    if results[0] > 255:
-        sys.exit(113)
-    sys.exit(int(results[0]))
-
-if not args.quiet:
-    print("Begin run:",)
-    if inittestcount == 0: print("searching for modules and tests.")
-
-# walk pwd tree
+# walk pwd tree to find tests and modules
 for root, dirs, files in os.walk("."):
     for f in sorted(files):
         if f[-3:] == ".py":
-            if root[-6:] == "/tests" and inittestcount == 0:
+            if inittestcount == 0: and root[-6:] == "/tests"
                 testfiles.append(os.path.join(root,f))
             else:
-                pythonpath.append(os.path.join(root,f))
-
-# build the PYTHONPATH value
-pypathstr = ":".join(pythonpath)
+                sys.path.append(os.path.join(root,f))
 
 # now run each test found
 for test in testfiles:
-
+    teststr = ''
+    testcontext = {}
+    f = open(testfile, 'r')
+    while line = f.readline():
+        teststr += line
+    # this should be in a try
+    testcode = compile(teststr, test, "exec")
+    exec(testcode, testcontext)
+    # examine results
+    # append result
 
 # assuming we found any tests, give a summary (or not)
 if len(testfiles) > 0:
-    tests_failed = tests_run - tests_passed
-    if not args.quiet:
-        print("End of run")
-        print("   Tests passing: {}/{}, in {} script(s)".format(tests_passed, tests_run, len(testfiles)))
-    if tests_failed > 0:
-        if not args.silent:
-            print("   Tests failing: {}, in {} script(s)".format(tests_failed, failfiles))
-            print(">> FAIL <<")
-        sys.exit(1)
-    else:
-        if not args.quiet:
-            print("Success")
+    pass
 else:
     if not args.quiet:
         print("No tests found; nothing to do.")
