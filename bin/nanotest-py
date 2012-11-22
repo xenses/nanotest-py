@@ -8,7 +8,7 @@ import sys
 # ----------------------------------------------------------------------- init
 
 parser = argparse.ArgumentParser(description="Find any and all files matching '*/tests/*py' in the current directory tree, and run them as nanotest-py tests.")
-parser.add_argument("-a", "--all", action="store_true", help ="Run all test scripts, even those whose name ends in 'DEV.py'")
+parser.add_argument("-a", "--all", action="store_true", help ="Run developer test scripts as well as regular ones")
 parser.add_argument("-j", "--json", action="store_true", help ="Dump all test results to STDOUT as JSON (disables other output; result will be an empty list if no tests are found)")
 parser.add_argument("-s", "--silent", action="store_true", help ="Output nothing at all, indicating test failure by return code (0: success, 1: failure, 2: no tests found)")
 parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.0.0')
@@ -90,8 +90,7 @@ if len(testfiles) == 0:
 
 
 for test in testfiles:
-    teststr = ''
-    # open each test file and read it in
+    # try to open each test file and read it in
     try:
         f = open(test, 'r')
     except Exception as err:
@@ -99,14 +98,14 @@ for test in testfiles:
         results.append({'run': False, 'msg': msg, 'file': test, 'tests': None})
         continue
     teststr = f.read()
-    # compile file contents to code object
+    # try to compile file contents to code object
     try:
         testcode = compile(teststr, test, "exec")
     except Exception as err:
         msg = "tests failed to compile: {}".format(err)
         results.append({'run': False, 'msg':msg , 'file': test, 'tests': None})
         continue        
-    # run tests and stow results
+    # try to run tests
     testcontext = {}
     try:
         exec(testcode, testcontext)
@@ -114,11 +113,15 @@ for test in testfiles:
         msg = "tests failed to run: {}".format(err)
         results.append({'run': False, 'msg':msg , 'file': test, 'tests': None})
         continue
+    # handle there not being a known Nanotester object
     if not "n" in testcontext:
         results.append({'run': False, 'msg':"no Nanotester object found" , 'file': test, 'tests': None})
         continue
     results.append({'run': True, 'msg': None, 'file': test, 'tests': testcontext['n'].results})
 
+
+# done. dump raw results as json, or process for pretty-printing
+rc = 0
 if args.json:
     print(json.dumps(results))
 else:
