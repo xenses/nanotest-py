@@ -4,10 +4,9 @@ import argparse
 import os
 import sys
 
-parser = argparse.ArgumentParser(description="Find any and all files '{...}/tests/*py' in the current subtree and run them as nanotest-py tests.")
-parser.add_argument("-j", "--json", action="store_true", help ="Dump all test data to STDOUT as JSON")
-parser.add_argument("-q", "--quiet", action="store_true", help="Only print error output")
-parser.add_argument("-s", "--silent", action="store_true", help ="Print nothing at all")
+parser = argparse.ArgumentParser(description="Find any and all files matching '/tests/*py' in the current directory tree, and run them as nanotest-py tests.")
+parser.add_argument("-j", "--json", action="store_true", help ="Dump all test results to STDOUT as JSON (disables all other output)")
+parser.add_argument("-s", "--silent", action="store_true", help ="Output nothing at all, indicating test failure by return code (0: success, 1: failure, 2: no tests found)")
 parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.0.0')
 parser.add_argument('testfiles', metavar="TEST", nargs="*",  help="Execute specified test files instead of searching tree")
 args = parser.parse_args()
@@ -18,31 +17,35 @@ sys.path.append('./')
 testfiles     = args.testfiles
 inittestcount = len(testfiles)
 
-# walk pwd tree to find tests and modules
 for root, dirs, files in os.walk("."):
+    # walk pwd tree to find tests and modules
     for f in sorted(files):
         if f[-3:] == ".py":
-            if inittestcount == 0: and root[-6:] == "/tests"
+            if inittestcount == 0 and root[-6:] == "/tests":
                 testfiles.append(os.path.join(root,f))
             else:
                 sys.path.append(os.path.join(root,f))
+if len(testfiles) == 0:
+    if not args.silent or args.json:
+        print("No tests found; nothing to do.")
+    os.exit(2)
 
-# now run each test found
 for test in testfiles:
     teststr = ''
+    # open each test file and read it in
+    try:
+        f = open(testfile, 'r')
+    except Exception as err:
+        continue
+    teststr = f.read()
+    # compile to code object
+    try:
+        testcode = compile(teststr, test, "exec")
+    except Exception as err:
+        continue        
+
     testcontext = {}
-    f = open(testfile, 'r')
-    while line = f.readline():
-        teststr += line
-    # this should be in a try
-    testcode = compile(teststr, test, "exec")
     exec(testcode, testcontext)
     # examine results
     # append result
 
-# assuming we found any tests, give a summary (or not)
-if len(testfiles) > 0:
-    pass
-else:
-    if not args.quiet:
-        print("No tests found; nothing to do.")
