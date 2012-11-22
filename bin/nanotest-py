@@ -6,6 +6,7 @@ import os
 import sys
 
 parser = argparse.ArgumentParser(description="Find any and all files matching '*/tests/*py' in the current directory tree, and run them as nanotest-py tests.")
+parser.add_argument("-a", "--all", action="store_true", help ="Run all test scripts, even those whose name ends in 'DEV.py'")
 parser.add_argument("-j", "--json", action="store_true", help ="Dump all test results to STDOUT as JSON (disables other output; result will be an empty list if no tests are found)")
 parser.add_argument("-s", "--silent", action="store_true", help ="Output nothing at all, indicating test failure by return code (0: success, 1: failure, 2: no tests found)")
 parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.0.0')
@@ -26,7 +27,11 @@ for root, dirs, files in os.walk("."):
     for f in sorted(files):
         if f[-3:] == ".py":
             if inittestcount == 0 and root[-6:] == "/tests":
-                testfiles.append(os.path.join(root,f))
+                if f[-6:-3] == "DEV":
+                    if args.all:
+                        testfiles.append(os.path.join(root,f))
+                else:
+                    testfiles.append(os.path.join(root,f))
             else:
                 sys.path.insert(0, os.path.join(root,f))
 if len(testfiles) == 0:
