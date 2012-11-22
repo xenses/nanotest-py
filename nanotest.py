@@ -1,16 +1,16 @@
 import inspect
 import re
 
+version = "v2.0.0"
+
 class Nanotester:
     """
     """
     def __init__(self):
-        self.testnum = 0
         self.results = []
         self.re_re   = re.compile("\:re\:")
 
     def test(self, xpmtl, given, msg):
-        self.testnum += 1
         if type(xpmtl) != type(given):
                 self.results.append(self._result(type(given), type(xpmtl), False, msg, "Types don't match"))
         if isinstance(xpmtl, (tuple, list, dict)):
@@ -29,13 +29,12 @@ class Nanotester:
         # get filename, line num, stuff
         context = inspect.getouterframes(inspect.getcurrentframe())[1]
         # frame, filename, linenum, function_name, lines, index
-        res['test']     = self.testnum
-        res['filename'] = context[1]
-        res['linenum']  = context[2]
-        res['pass']     = success
-        res['expected'] = given
-        res['got']      = xpmtl
-        res['msg']      = msg
+        res['file']  = context[1]
+        res['line']  = context[2]
+        res['pass']  = success
+        res['xpect'] = given
+        res['got']   = xpmtl
+        res['msg']   = msg
         return res
 
     def _is_eq(self, xpmtl, given):
