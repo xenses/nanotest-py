@@ -9,7 +9,7 @@ parser.add_argument("-j", "--json", action="store_true", help ="Dump all test da
 parser.add_argument("-q", "--quiet", action="store_true", help="Only print error output")
 parser.add_argument("-s", "--silent", action="store_true", help ="Print nothing at all")
 parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.0.0')
-parser.add_argument('testfiles', metavar="TEST", nargs="*",  help="Execute only specified test files instead of searching tree")
+parser.add_argument('testfiles', metavar="TEST", nargs="*",  help="Execute specified test files instead of searching tree")
 args = parser.parse_args()
 if args.silent:
     args.quiet = True
@@ -48,33 +48,7 @@ pypathstr = ":".join(pythonpath)
 
 # now run each test found
 for test in testfiles:
-    results = subprocess.getstatusoutput("TERM=dumb PYTHONPATH=\"{}\" /usr/bin/env python {}".format(pypathstr, test))
-    # abort if the test script as a whole failed
-    if results[0] != 0:
-        test_script_fail_abort(test, results)
-    # script was ok. pull test counts off results
-    reslist = results[1].split("\n")
-    try:
-        trun, tpass = reslist[-1].split();
-    except ValueError:
-        print("\n>>> ABORT: Test script {} returned nothing. Did you call nanotest_summary()?".format(test))
-        sys.exit(1)
-    reslist.pop()
-    # add counts to totals
-    tests_run += int(trun)
-    tests_passed += int(tpass)
-    # tell about success or failure
-    if trun == tpass:
-        if not args.quiet:
-            print("   {}: {}/{} passing; ok".format(test, tpass, trun))
-    else:
-        failfiles += 1
-        if not args.silent:
-            print("   {}: {}/{} passing; FAIL".format(test, tpass, trun))
-    # print errors, if any
-    if len(reslist) > 0:
-        if not args.silent:
-            print("\n".join(["      " + line for line in reslist]))
+
 
 # assuming we found any tests, give a summary (or not)
 if len(testfiles) > 0:
