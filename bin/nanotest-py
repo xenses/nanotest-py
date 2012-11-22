@@ -28,7 +28,7 @@ for root, dirs, files in os.walk("."):
             if inittestcount == 0 and root[-6:] == "/tests":
                 testfiles.append(os.path.join(root,f))
             else:
-                sys.path.append(os.path.join(root,f))
+                sys.path.insert(0, os.path.join(root,f))
 if len(testfiles) == 0:
     if not args.silent or args.json:
         print("No tests found; nothing to do.")
