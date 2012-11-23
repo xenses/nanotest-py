@@ -27,6 +27,6 @@ n.test(test2["got"], 0, "expected '0'")
 n.test(test2["msg"], "generating a failure", "msg was 'generating a failure'")
 n.test(test2["reason"], None, "no reason for _is_eq tests")
 # elide failing test before reporting gets to it
-a = n.results[:10]
+a = n.results[:11]
 b = n.results[12:]
 n.results = a + b

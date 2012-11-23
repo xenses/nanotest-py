@@ -36,8 +36,7 @@ class Nanotester:
             # build hashes, etc
             pass
         elif self.re_re.match(str(given)):
-            # call _re_match
-            pass
+            self._re_match(xpmtl, given, msg, invert)
         else:
             self._is_eq(xpmtl, given, msg, invert)
 
@@ -50,12 +49,17 @@ class Nanotester:
         else:
             self.results.append(self._result(False, given, xpmtl, msg, None))
 
-    def _re_match(self, xpmtl, given):
-        if re.search(kw['given'][4:], str(kw['xpmtl'])):
-            return True
+    def _re_match(self, xpmtl, given, msg, invert):
+        restr = given[4:]
+        if re.search(restr, str(xpmtl)):
+            self.results.append(self._result(True, None, None, None, None))
         else:
-            _set_err(reason="renomatch", errkey=key)
-            return False
+            if invert:
+                self.results.append(self._result(True, None, None, None, None))
+            else:
+                self.results.append(self._result(False, restr, xpmtl, msg,
+                                                 "regexp failure ('got' is not a match for 'expected')"))
+
 
     def _compare(self, xpmtl, given):
         # build dict of hashed xpmtl structure.
