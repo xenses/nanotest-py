@@ -19,6 +19,6 @@ Changes and additions in version 2
 Nanotest v2 is a near-total rewrite, and as the major version number
 bump indicates, it is backward-incompatible with the version 1 API.
 
-Summarizing all changes and new capabilitis would amount to an (even)
-shorter version of the tutorial, so I recommend simply discarding
-everything you knew about nanotest and starting over.
+Summarizing all changes and new capabilitis would amount to a
+condensed tutorial, so I recommend simply discarding everything you
+may know about nanotest and starting over.
