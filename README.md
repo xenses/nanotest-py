@@ -1,10 +1,6 @@
 This is the Python implementation of nanotest, a tiny testing
 library. Python 3.2+ is required due to use of the `argparse` module.
 
-
-Installation
-------------
-
 To run nanotest's own tests before installation:
 
     ./bin/nanotest-py
