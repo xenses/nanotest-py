@@ -12,9 +12,9 @@ test1 = n.results[0]
 n.test(test1["file"], "./tests/00-basic.py", "tests in this file")
 n.test(test1["line"], 5, "first test was on line 5")
 n.test(test1["pass"], True, "first test passed")
-n.test(test1["xpect"], None, "don't store expected values for successful tests")
-n.test(test1["got"], None, "don't store received values for successful tests")
-n.test(test1["msg"], None, "don't store msg for successful tests")
+n.test(test1["xpect"], 1, "1")
+n.test(test1["got"], 1, "also 1")
+n.test(test1["msg"], "basic identity test", "msg")
 n.test(test1["reason"], None, "don't store reason for _is_eq tests")
 
 n.test(0, 1, "generating a failure")

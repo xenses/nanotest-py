@@ -45,17 +45,17 @@ class Nanotester:
         
     def _is_eq(self, xpmtl, given, msg, invert):
         if (xpmtl == given and invert == False) or (xpmtl != given and invert == True):
-            self.results.append(self._result(True, None, None, None, None))
+            self.results.append(self._result(True, given, xpmtl, msg, None))
         else:
             self.results.append(self._result(False, given, xpmtl, msg, None))
 
     def _re_match(self, xpmtl, given, msg, invert):
         restr = given[4:]
         if re.search(restr, str(xpmtl)):
-            self.results.append(self._result(True, None, None, None, None))
+            self.results.append(self._result(True, restr, xpmtl, msg, None))
         else:
             if invert:
-                self.results.append(self._result(True, None, None, None, None))
+                self.results.append(self._result(True, restr, xpmtl, msg, None))
             else:
                 self.results.append(self._result(False, restr, xpmtl, msg,
                                                  "regexp failure ('got' is not a match for 'expected')"))
