@@ -10,37 +10,42 @@ class Nanotester:
         self.results = []
         self.re_re   = re.compile("\:re\:")
 
-    def test(self, xpmtl, given, msg):
-        if type(xpmtl) != type(given):
-                self.results.append(self._result(type(given), type(xpmtl), False, msg, "Types don't match"))
-        if isinstance(xpmtl, (tuple, list, dict)):
-            # build hashes, etc
-            pass
-        if self.re_re.match(str(given)):
-            # call _re_match
-            pass
-
-    def _result(self, given, xpmtl, success, msg, *args):
+    def _result(self, success, given, xpmtl, msg, *args):
         res = {}
         if len(args) > 0:
             res['reason'] = args[0]
         else:
             res['reason'] = None
         # get filename, line num, stuff
-        context = inspect.getouterframes(inspect.getcurrentframe())[1]
+        frame = inspect.getouterframes(inspect.currentframe())[3]
+        #for f in frame: print(f)
         # frame, filename, linenum, function_name, lines, index
-        res['file']  = context[1]
-        res['line']  = context[2]
+        res['file']  = frame[1]
+        res['line']  = frame[2]
         res['pass']  = success
         res['xpect'] = given
         res['got']   = xpmtl
         res['msg']   = msg
         return res
 
-    def _is_eq(self, xpmtl, given):
+    def test(self, xpmtl, given, msg):
+        if type(xpmtl) != type(given):
+            res = self._result(False, type(given), type(xpmtl), msg, "Types don't match")
+            self.results.append(res)
+        elif isinstance(xpmtl, (tuple, list, dict)):
+            # build hashes, etc
+            pass
+        elif self.re_re.match(str(given)):
+            # call _re_match
+            pass
+        else:
+            self._is_eq(xpmtl, given, msg)
+
+    def _is_eq(self, xpmtl, given, msg):
         if xpmtl == given:
-            return True
-        return False
+            self.results.append(self._result(True, None, None, None, None))
+        else:
+            self.results.append(self._result(False, given, xpmtl, msg, None))
 
     def _re_match(self, xpmtl, given):
         if re.search(kw['given'][4:], str(kw['xpmtl'])):
