@@ -9,6 +9,7 @@ class Nanotester:
     def __init__(self):
         self.results = []
         self.re_re   = re.compile("\:re\:")
+        self.re_type = re.compile("\:ty\:")
 
     def _result(self, success, given, xpmtl, msg, *args):
         res = {}
@@ -18,7 +19,6 @@ class Nanotester:
             res['reason'] = None
         # get filename, line num, stuff
         frame = inspect.getouterframes(inspect.currentframe())[3]
-        #for f in frame: print(f)
         # frame, filename, linenum, function_name, lines, index
         res['file']  = frame[1]
         res['line']  = frame[2]
