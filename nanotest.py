@@ -28,7 +28,7 @@ class Nanotester:
         res['msg']   = msg
         return res
 
-    def test(self, xpmtl, given, msg):
+    def test(self, xpmtl, given, msg, invert=False):
         if type(xpmtl) != type(given):
             res = self._result(False, type(given), type(xpmtl), msg, "Types don't match")
             self.results.append(res)
@@ -39,10 +39,13 @@ class Nanotester:
             # call _re_match
             pass
         else:
-            self._is_eq(xpmtl, given, msg)
+            self._is_eq(xpmtl, given, msg, invert)
 
-    def _is_eq(self, xpmtl, given, msg):
-        if xpmtl == given:
+    def untest(self, xpmtl, given, msg):
+        self.test(xpmtl, given, msg, invert=True)
+        
+    def _is_eq(self, xpmtl, given, msg, invert):
+        if (xpmtl == given and invert == False) or (xpmtl != given and invert == True):
             self.results.append(self._result(True, None, None, None, None))
         else:
             self.results.append(self._result(False, given, xpmtl, msg, None))
