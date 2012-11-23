@@ -46,20 +46,20 @@ successful or not.
 * 1 - Failure
 * 2 - No tests found
 
+(These return codes apply to all modes of operation.)
+
 ### JSON
 
 Raw test results can be obtained with the `--json` option. The output will be a list of objects, each of which looks like
 
 ```
-{
-    file:   TEST_FILENAME
-    line:   LINE_NUMBER
-    pass:   SUCCESS_T/F
-    xpect:  GIVEN_VALUE
-    got:    EXPERIMENTAL_VALUE
-    msg:    TEST_DESCRIPTION
-    reason: ADDL_FAILURE_INFO
-}
+{ file:   TEST_FILENAME
+  line:   LINE_NUMBER
+  pass:   SUCCESS_T/F
+  xpect:  GIVEN_VALUE
+  got:    EXPERIMENTAL_VALUE
+  msg:    TEST_DESCRIPTION
+  reason: ADDL_FAILURE_INFO }
 ```
 
 How to write tests
