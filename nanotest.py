@@ -71,21 +71,22 @@ class Nanotester:
     def _compare(self, xpmtl, given):
         # build dict of hashed xpmtl structure.
         self.nodestack = []
-        self._hash(xpmtl)
+        self.xhash = {}
+        self._hash(given, self.xhash)
         # run hash function over given structure, in verify mode
         self.nodestack = []
-        self.ghash = self._hash(given)
+        self.ghash = {}
+        self._hash(given, self.ghash)
         # iterate over xpmtl dict for elements whose seen flag is not
         # set. fail if we find one.
-        for k, v in nanoconf['deephash'].items():
-            if v[1] == False:
-                _set_err(reason="nomatchingiven", errkey=k)
-                _print_deep_fail_msg(msg, None, None)
-                return False
-        return True
+        #for k, v in nanoconf['deephash'].items():
+        #    if v[1] == False:
+        #        _set_err(reason="nomatchingiven", errkey=k)
+        #        _print_deep_fail_msg(msg, None, None)
+        #        return False
+        #return True
 
-    def _hash(self, element):
-        nodestack = []
+    def _hash(self, element, struct):
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
