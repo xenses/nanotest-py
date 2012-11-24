@@ -48,7 +48,7 @@ def process_results():
             print("ok")
         else:
             print("not ok")
-            print(output, end='')
+    print(output, end="")
     print("{}/{} passing in {} files".format(passing_total, tests_total, len(results)))
     return rc
 
@@ -63,9 +63,10 @@ def process_tests(tests):
             passing += 1
         else:
             output += "    test {} ({}) on line {} of {} failed\n".format(testnum, t["msg"], t["line"], t["file"])
-            if t["reason"]: output += "        {}\n".format(t["reason"])
-            output += "        expected: '{}'\n".format(t["xpect"])
-            output += "        got:      '{}'\n".format(t["got"])
+            for c in t["comp"]:
+                if c["reason"]: output += "      {}\n".format(c["reason"])
+                output += "        expected: '{}'\n".format(c["xpect"])
+                output += "        got:      '{}'\n".format(c["got"])
     return passing, output
 
 # ----------------------------------------------------------------------- main
