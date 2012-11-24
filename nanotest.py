@@ -7,25 +7,32 @@ class Nanotester:
     """
     """
     def __init__(self):
-        self.results = []
+        self.results   = []
+        self.nodestack = []
         self.re_re   = re.compile("\:re\:")
         self.re_type = re.compile("\:ty\:")
 
+    def _subresult(self, given, xpmtl, reason):
+        sres = {}
+        sres["xpect"]  = given
+        sres["got"]    = xpmtl
+        sres["reason"] = reason
+        return sres
+
     def _result(self, success, given, xpmtl, msg, *args):
         res = {}
+        reason = None
         if len(args) > 0:
-            res['reason'] = args[0]
-        else:
-            res['reason'] = None
+            reason = args[0]
         # get filename, line num, stuff
         frame = inspect.getouterframes(inspect.currentframe())[3]
         # frame, filename, linenum, function_name, lines, index
-        res['file']  = frame[1]
-        res['line']  = frame[2]
-        res['pass']  = success
-        res['xpect'] = given
-        res['got']   = xpmtl
-        res['msg']   = msg
+        res["file"]  = frame[1]
+        res["line"]  = frame[2]
+        res["pass"]  = success
+        res["msg"]  = msg
+        res["comp"] = []
+        res["comp"].append(self._subresult(given, xpmtl, reason))
         return res
 
     def test(self, xpmtl, given, msg, invert=False):
@@ -63,8 +70,10 @@ class Nanotester:
 
     def _compare(self, xpmtl, given):
         # build dict of hashed xpmtl structure.
-        self.xhash = self._hash(xpmtl)
+        self.nodestack = []
+        self._hash(xpmtl)
         # run hash function over given structure, in verify mode
+        self.nodestack = []
         self.ghash = self._hash(given)
         # iterate over xpmtl dict for elements whose seen flag is not
         # set. fail if we find one.
