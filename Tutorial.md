@@ -50,22 +50,50 @@ successful or not.
 
 ### JSON
 
-Raw test results can be obtained with the `--json` option. The output will be a list of objects, each of which looks like
+Raw test results can be obtained with the `--json` option. The output
+will be a list of objects, each of which looks like
 
 ```
 { file:   TEST_FILENAME
   line:   LINE_NUMBER
   pass:   SUCCESS_T/F
-  xpect:  GIVEN_VALUE
-  got:    EXPERIMENTAL_VALUE
   msg:    TEST_DESCRIPTION
-  reason: ADDL_FAILURE_INFO }
+  comp:   [ COMPARISON_DATA ] }
 ```
+
+The `comp` field contains comparison data from a test. It's
+a list of objects in this format
+
+```
+{ xpect:  GIVEN_VALUE
+  got:    EXPERIMENTAL_VALUE
+  reason: ADDL_TEST_INFO }
+```
+
+Tests of scalar values will involve a single comparison, but tests on
+datastructres can generate many failures and may have any number of
+comparisons in the test output.
+
 
 How to write tests
 ------------------
 
-Tests in nanotest-py are simply calls to `pis()`, `pisnt()`, or
+`nanotest` is an object-based module. The boilerplate for a test
+script is
+
+```
+import nanotest
+
+n = nanotest.Nanotester()
+```
+
+_The `nanotest` object is called `n` by convention, just as test
+scripts live in directories named `tests/` by convention. This is
+important. If the object has a different name, the test harness
+(`nanotest-py`) will not be able to examine the results of the tests,
+and that script as a whole will be treated as a failure._
+
+Tests in nanotest-py are calls to `pis()`, `pisnt()`, or
 `pis_deeply()`. This makes it easy to write tests as you code. Anytime
 you add new code, correct a bug, or refactor something, that's a good
 time to write a test (or, if you have a test suite, to rerun it).
@@ -90,35 +118,6 @@ programmer can get a handle on at any point in a program's life.
 
 ### Examples
 
-Here are some simple examples of `pis()` and `pisnt()`.
-
-```
-$ python
-Python 3.2.2 (default, Sep  5 2011, 04:33:58)
-[GCC 4.6.1 20110819 (prerelease)] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
->>> from nanotest import *
->>>
->>> def square(x):
-...   return x * x
-...
->>> pis( square(4), 16, "4 squared is 16")
-True
->>> pisnt( square(9), 45, "9*9 should not be 9*5")
-True
-```
-
-As shown above, tests don't have to be contained in anything. They can
-be used and experimented with in the Python repl, just like everything
-else.
-
-`pis_deeply` works the same way, but is more powerful. It expects its
-experimental and given values to be *compound types*
-(*i.e. structures*). The structures may be of arbitrary depth and
-construction. It will return True only when both structures are
-*congruent*, when all nodes are of *the same type*, and when all leaf
-nodes hold *the same values*.
-
 ```
 >>> pis_deeply((1, 'a', 34), (1, 'a', 34), "identical tuples")
 True
@@ -138,72 +137,35 @@ FAILED test 6: these don't match either
    Expected 'y'; got 'q'
 False
 ```
+
 ### Regexes
 
-The above examples show how to use nanotest to test for simple, rigid
-equivalence. But frequently, in the real world, we cannot know exactly
-what our data will be. We may know only that a value must be
-numeric. We may know that a value must be of a certain form, like a
-phone number.
+Frequently, in the real world, it is impossible to know exactly what a
+value will be.  It may only be known that a value must be numeric, or
+of a certain form (like a phone number).
 
-To enable these kinds of comparisons in tests, nanotest checks to see
-if its given value is a string which begins with `:re:`. If it is, the
-remainder of the string is used as a regex which the experimental
-value is tested against.
+`nanotest` allows these kinds of comparisons in tests by using regular
+expression searches.  If a test's `given` value is a string which
+begins with `:re:`, the remainder of the string is used as a regex
+which the experimental value is matched
 
 ```
->>> pis('4873 2767 0909 2763', ':re:4\d{3} \d{4} \d{4} \d{4}', "visa number")
-True
->>> pisnt("Agamemnon Q. Huxtable", ':re:\d', "No numbers allowed in names")
-True
+n.test('4873 2767 0909 2763', ':re:4\d{3} \d{4} \d{4} \d{4}', "visa number")
+n.untest("Agamemnon Q. Huxtable", ':re:\d', "No numbers allowed in names")
 ```
 
 This is also allowed with any and all values in the given struct of a
-`pis_deeply()` call.
+deep comparison.
 
 ```
->>> # set up a string that matches a v4 (random) uuid
-... v4uuid = ':re:[\0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'
->>>
->>> # now mock up an object containing a random UUID
-... exp_val = { 'a':1, 'b':2, 'c':uuid.uuid4() }
->>> exp_val
-{'a': 1, 'c': UUID('0c490083-47b0-4462-a1fb-af6a593dc3fd'), 'b': 2}
->>>
->>> pis_deeply(exp_val, {'a':1, 'b':2, 'c':v4uuid}, "c will match using the stored regex")
+# set up a string that matches a v4 (random) uuid
+v4uuid = ':re:[\0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'
+# now mock up an object containing a random UUID
+exp_val = { 'a':1, 'b':2, 'c':uuid.uuid4() }
+# {'a': 1, 'c': UUID('0c490083-47b0-4462-a1fb-af6a593dc3fd'), 'b': 2}
+n.test(exp_val, {'a':1, 'b':2, 'c':v4uuid}, "c will match using the stored regex")
 True
 ```
-
-
-What's a test script?
----------------------
-
-nanotest-py test scripts are just Python programs which contain
-tests. The basic skeleton is:
-
-```
-  from nanotest import *
-
-  # code and tests go here
-
-  nanotest_summary()
-```
-
-The `import` line will put 4 functions in your namespace: `pis()`,
-`pisnt()`, `pis_deeply()`, and `nanotest_summary()`. The first three
-are the actual test functions of nanotest. The last is a simple
-reporting function which outputs the script results to the test
-harness.
-
-This function, `nanotest_summary()`, is called on the last line of a
-test script. For accurate reporting of results, it must be the last
-thing that happens in a test script.
-
-In the middle go the tests, and whatever setup and/or teardown code is
-needed for those tests. There are no restrictions or prescriptions of
-any sort. It's not even required that a test script actually call any
-of the testing functions, though this isn't going to do much to help
-ensure that software is operating correctly.
 
 
 What's a test suite?
