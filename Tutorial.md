@@ -80,11 +80,11 @@ import nanotest
 n = nanotest.Nanotester()
 ```
 
-_The `nanotest` object is called `n` by convention, just as test
-scripts live in directories named `tests/` by convention. This is
-important. If the object has a different name, the test harness
-(`nanotest-py`) will not be able to examine the results of the tests,
-and that script as a whole will be treated as a failure._
+The `nanotest` object is called `n` by convention, just as test
+scripts live in directories named `tests/` by convention. If the
+object has a different name, the test harness (`nanotest-py`) will not
+be able to examine the results of the tests, and that script as a
+whole will be treated as a no-op.
 
 Tests in nanotest-py are calls to `pis()`, `pisnt()`, or
 `pis_deeply()`. This makes it easy to write tests as you code. Anytime
