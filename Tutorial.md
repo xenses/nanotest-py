@@ -61,6 +61,7 @@ will be a list of objects, each of which looks like
   comp:   [ { xpect:  GIVEN_VALUE
               got:    EXPERIMENTAL_VALUE
               reason: ADDL_TEST_INFO }, ... ] }
+```
 
 The `comp` field contains a list of comparison data objects.  Tests of
 scalar values will involve a single comparison, but tests on
