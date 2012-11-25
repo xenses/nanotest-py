@@ -58,21 +58,14 @@ will be a list of objects, each of which looks like
   line:   LINE_NUMBER
   pass:   SUCCESS_T/F
   msg:    TEST_DESCRIPTION
-  comp:   [ COMPARISON_DATA ] }
-```
+  comp:   [ { xpect:  GIVEN_VALUE
+              got:    EXPERIMENTAL_VALUE
+              reason: ADDL_TEST_INFO }, ... ] }
 
-The `comp` field contains comparison data from a test. It's
-a list of objects in this format
-
-```
-{ xpect:  GIVEN_VALUE
-  got:    EXPERIMENTAL_VALUE
-  reason: ADDL_TEST_INFO }
-```
-
-Tests of scalar values will involve a single comparison, but tests on
-datastructres can generate many failures and may have any number of
-comparisons in the test output.
+The `comp` field contains a list of comparison data objects.  Tests of
+scalar values will involve a single comparison, but tests on
+datastructres, if they are not a match, may generate a list of many
+objects.
 
 
 How to write tests
