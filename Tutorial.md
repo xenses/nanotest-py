@@ -23,6 +23,7 @@ nanotest's own test suite looke like:
 
 ```
   $ nanotest-py
+  TODO PLUG THIS IN AFTER THINGS SETTLE
   $
 ```
 
@@ -65,8 +66,8 @@ will be a list of objects, each of which looks like
 
 The `comp` field contains a list of comparison data objects.  Tests of
 scalar values will involve a single comparison, but tests on
-datastructres, if they are not a match, may generate a list of many
-objects.
+datastructres may generate a list of many objects if the structs do
+not match.
 
 
 How to write tests
