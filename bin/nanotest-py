@@ -62,7 +62,7 @@ def process_tests(tests):
         if t["pass"]:
             passing += 1
         else:
-            output += "    test {} ({}) on line {} of {} failed\n".format(testnum, t["msg"], t["line"], t["file"])
+            output += "    test {} ({}) on line {} failed\n".format(testnum, t["msg"], t["line"])
             for c in t["comp"]:
                 if c["reason"]: output += "      {}\n".format(c["reason"])
                 output += "        expected: '{}'\n".format(c["xpect"])
