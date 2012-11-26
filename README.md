@@ -25,8 +25,8 @@ removing software. Therefore, you should manually remove the old
 /usr/bin/nanotest
 ```
 
-And you may also wish to uninstall the old nanotest module(s). They
-will be at one or both of these paths:
+You should also uninstall the old nanotest module(s), which will be at
+one or both of these paths:
 
 ```
 /usr/lib/python3.2/site-packages/nanotest*
