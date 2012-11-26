@@ -3,7 +3,8 @@ library. Python 3.2+ is required due to use of the `argparse` module.
 
 To run nanotest's own tests before installation:
 
-    ./bin/nanotest-py
+    ./bin/nanotest-py # this will fail if nanotest v1 is installed
+                      # see below for more info
 
 After that, installation is standard:
 
