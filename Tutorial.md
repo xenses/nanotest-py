@@ -161,23 +161,7 @@ True
 ```
 
 
-What's a test suite?
+Test injection
 --------------------
 
-Simply a collection of one or more test scripts. Using nanotest itself
-as an example, the test suite is made of 4 scripts:
-
-* tests/00-pis_pisnt.py
-* tests/01-pis_deeply-hashing.py
-* tests/02-pis_deeply-success.py
-* tests/03-pis_deeply-fail.py
-
-Each of these scripts contains tests which exercise a specific bit of
-the library's functionality. The first tests the `pis` and `pisnt`
-functions. The second tests the hashing algorithm which drives the
-`pis_deeply` function. The third does positive testing
-(i.e. successful tests) of `pis_deeply` itself. The fourth tests
-`pis_deeply` in its failure modes.
-
-There's no right or wrong way to construct a test suite, but this sort
-of functional division is fairly typical.
+Coming soon.
