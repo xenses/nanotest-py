@@ -32,17 +32,17 @@ def process_results():
     for result in results:
         if len(result["file"]) > maxlen:
             maxlen = len(result["file"])
-    maxlen += 3
+    maxlen += 2
     print(maxlen)
     for result in results:
         if not result["run"]:
             rc = 1
             if not args.silent: 
-                print("{}: {}".format(result["file"], result["msg"]))
+                print("{:{fill}} {}".format(result["file"], result["msg"], fill=maxlen))
             continue
         numtests = len(result["tests"])
         if numtests == 0:
-            print("{}: no tests in file".format(result["file"]))
+            print("{:{fill}} no tests in file".format(result["file"], fill=maxlen))
             continue
         if not args.silent: 
             print("{:{fill}}".format(result["file"], fill=maxlen), end=' ')
@@ -128,7 +128,7 @@ for test in testfiles:
     results.append({'run': True, 'msg': None, 'file': test, 'tests': testcontext['n'].results})
 
 
-# done. dump raw results as json, if desired
+# done. dump raw results as json or print report
 rc = 0
 if args.json:
     print(json.dumps(results))
