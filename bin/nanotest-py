@@ -28,6 +28,12 @@ def process_results():
     rc  = 0
     tests_total = 0
     passing_total = 0
+    maxlen = 0
+    for result in results:
+        if len(result["file"]) > maxlen:
+            maxlen = len(result["file"])
+    maxlen += 3
+    print(maxlen)
     for result in results:
         if not result["run"]:
             rc = 1
@@ -39,7 +45,7 @@ def process_results():
             print("{}: no tests in file".format(result["file"]))
             continue
         if not args.silent: 
-            print("{}\t\t".format(result["file"]), end=' ')
+            print("{:{fill}}".format(result["file"], fill=maxlen), end=' ')
             passing, output = process_tests(result["tests"])
             tests_total    += numtests
             passing_total  += passing
