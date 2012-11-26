@@ -16,9 +16,20 @@ Tutorial document to learn how to write tests.
 Changes and additions in version 2
 ----------------------------------
 
-Nanotest v2 is a near-total rewrite, and as the major version number
-bump indicates, it is backward-incompatible with the version 1 API.
+Nanotest 2 is a near-total rewrite, and as the major version number
+bump indicates, it is backward-incompatible with the version 1
+interface.
 
-Summarizing all changes and new capabilitis would amount to a
-condensed tutorial, so I recommend simply discarding everything you
-may know about nanotest and starting over.
+The major, incompatible changes are, in summary:
+
+* The module is now object-based, and exports no symbols.
+
+* The number of testing functions (now methods) is reduced to two.
+
+* The module no longer relies on subprocesses and parsing textual
+  output.
+  
+* Test results are now available as a report (old style) or as
+  unparsed, JSON-formatted data.
+  
+* `--quiet` mode no longer exists
