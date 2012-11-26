@@ -13,7 +13,7 @@ See `nanotest-py --help` for information on how to run tests. Read the
 Tutorial document to learn how to write tests.
 
 
-Changes and additions in version 2
+Changes in version 2
 ----------------------------------
 
 Nanotest 2 is a near-total rewrite, and as the major version number
@@ -32,4 +32,6 @@ The major, incompatible changes are, in summary:
 * Test results are now available as a report (old style) or as
   unparsed, JSON-formatted data.
   
-* `--quiet` mode no longer exists
+* `--quiet` mode no longer exists.
+
+Please see the tutorial for more complete information.
