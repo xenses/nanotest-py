@@ -48,7 +48,7 @@ def process_results():
             print("ok")
         else:
             print("not ok")
-    print(output, end="")
+        print(output, end="")
     print("{}/{} passing in {} files".format(passing_total, tests_total, len(results)))
     return rc
 
@@ -122,7 +122,7 @@ for test in testfiles:
     results.append({'run': True, 'msg': None, 'file': test, 'tests': testcontext['n'].results})
 
 
-# done. dump raw results as json, or process for pretty-printing
+# done. dump raw results as json, if desired
 rc = 0
 if args.json:
     print(json.dumps(results))
