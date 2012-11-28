@@ -24,8 +24,10 @@ class Nanotester:
         reason = None
         if len(args) > 0:
             reason = args[0]
-        # get filename, line num, stuff
-        frame = inspect.getouterframes(inspect.currentframe())[3]
+        # get filename, line num, stuff. should always want the -2nd
+        # frame in the stack, since -1 is the exec(). this may need to
+        # be cased when test injection is implemented
+        frame = inspect.getouterframes(inspect.currentframe())[-2]
         # frame, filename, linenum, function_name, lines, index
         res["file"]  = frame[1]
         res["line"]  = frame[2]
