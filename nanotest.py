@@ -109,5 +109,5 @@ class Nanotester:
             self.nodestack.pop()
         else:
             # leafnodes handled here
-            key = "".join(self.nodestack)
+            key = ".".join(self.nodestack)
             hashdict[key] = element
