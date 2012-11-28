@@ -88,26 +88,27 @@ class Nanotester:
         #        return False
         #return True
 
-    def _hash(self, element, struct):
+    def _hash(self, element, hashdict):
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
                 # dict
-                nodestack.append('dict')
+                self.nodestack.append('d')
                 for key in sorted(element.keys()):
-                    nodestack.append(str(key))
-                    _deep_build_hash(element[key], verify, msg)
-                    nodestack.pop()
+                    self.nodestack.append(str(key))
+                    self._hash(element[key], hashdict)
+                    self.nodestack.pop()
             else:
                 if isinstance(element, (list,)):
-                    nodestack.append('list')
+                    self.nodestack.append('l')
                 else:
-                    nodestack.append('tuple')
+                    self.nodestack.append('t')
                 for idx, subelem in enumerate(element):
-                    nodestack.append(str(idx))
-                    _deep_build_hash(subelem, verify, msg)
-                    nodestack.pop()
-            nodestack.pop()
+                    self.nodestack.append(str(idx))
+                    self._hash(subelem, hashdict)
+                    self.nodestack.pop()
+            self.nodestack.pop()
         else:
             # leafnodes handled here
-            key = ".".join(nodestack)
+            key = "".join(self.nodestack)
+            hashdict[key] = element
