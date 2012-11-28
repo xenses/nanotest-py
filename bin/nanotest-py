@@ -33,7 +33,6 @@ def process_results():
         if len(result["file"]) > maxlen:
             maxlen = len(result["file"])
     maxlen += 2
-    print(maxlen)
     for result in results:
         if not result["run"]:
             rc = 1
