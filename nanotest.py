@@ -92,9 +92,8 @@ class Nanotester:
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
-                # dict
                 self.nodestack.append('d')
-                for key in sorted(element.keys()):
+                for key in sorted(element.keys(), key=lambda key: str(key)):
                     self.nodestack.append(str(key))
                     self._hash(element[key], hashdict)
                     self.nodestack.pop()
