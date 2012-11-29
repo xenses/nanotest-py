@@ -76,14 +76,15 @@ class Nanotester:
 
 
     def _hash_n_comp(self, xpmtl, given, msg, invert):
+        self.nodestack = []
         self.xhash = {}
         self._hash(given, self.xhash)
+        self.nodestack = []
         self.ghash = {}
         self._hash(given, self.ghash)
         self._compare(msg, invert)
 
     def _hash(self, element, hashdict):
-        self.nodestack = []
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
