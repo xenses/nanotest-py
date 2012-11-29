@@ -58,6 +58,8 @@ def process_results():
     return rc
 
 
+# process_tests counts passing tests and generates reporting output
+# for failed tests.
 def process_tests(tests):
     testnum = 0
     passing = 0
@@ -67,9 +69,12 @@ def process_tests(tests):
         if t["pass"]:
             passing += 1
         else:
+            # all fails get basic info as output
             output += "    test {} ({}) on line {} failed\n".format(testnum, t["msg"], t["line"])
             for c in t["comp"]:
+                # if there's a reason given in the test, output it
                 if c["reason"]: output += "        {}\n".format(c["reason"])
+                # and show the xpect/got vals unless both are None
                 if c["xpect"] != None and c["got"] != None:
                     output += "        expected: '{}'\n".format(c["xpect"])
                     output += "        got:      '{}'\n".format(c["got"])
