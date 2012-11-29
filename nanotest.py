@@ -42,16 +42,19 @@ class Nanotester:
             res = self._result(False, type(given), type(xpmtl), msg, "Types don't match")
             self.results.append(res)
         elif isinstance(xpmtl, (tuple, list, dict)):
-            # build hashes, etc
-            pass
-        elif self.re_re.match(str(given)):
+            self._hash_n_comp(xpmtl, given, msg, invert)
+        else:
+            self._test_scalar(xpmtl, given, msg, invert)
+
+    def untest(self, xpmtl, given, msg):
+        self.test(xpmtl, given, msg, invert=True)
+
+    def _test_scalar(self, xpmtl, given, msg, invert):
+        if self.re_re.match(str(given)):
             self._re_match(xpmtl, given, msg, invert)
         else:
             self._is_eq(xpmtl, given, msg, invert)
 
-    def untest(self, xpmtl, given, msg):
-        self.test(xpmtl, given, msg, invert=True)
-        
     def _is_eq(self, xpmtl, given, msg, invert):
         if (xpmtl == given and invert == False) or (xpmtl != given and invert == True):
             self.results.append(self._result(True, given, xpmtl, msg, None))
@@ -70,23 +73,14 @@ class Nanotester:
                                                  "regexp failure ('got' is not a match for 'expected')"))
 
 
-    def _compare(self, xpmtl, given):
-        # build dict of hashed xpmtl structure.
+    def _hash_n_comp(self, xpmtl, given, msg, invert):
         self.nodestack = []
         self.xhash = {}
         self._hash(given, self.xhash)
-        # run hash function over given structure, in verify mode
         self.nodestack = []
         self.ghash = {}
         self._hash(given, self.ghash)
-        # iterate over xpmtl dict for elements whose seen flag is not
-        # set. fail if we find one.
-        #for k, v in nanoconf['deephash'].items():
-        #    if v[1] == False:
-        #        _set_err(reason="nomatchingiven", errkey=k)
-        #        _print_deep_fail_msg(msg, None, None)
-        #        return False
-        #return True
+        self._compare(msg, invert)
 
     def _hash(self, element, hashdict):
         if isinstance(element, (tuple, list, dict)):
@@ -111,3 +105,14 @@ class Nanotester:
             # leafnodes handled here
             key = ".".join(self.nodestack)
             hashdict[key] = element
+
+    #def _compare(self, msg, invert):
+    #    bad = 0
+    #    if invert:
+    #        for key in sorted(self.xhash.keys()):
+    #            if key in self.ghash: bad += 1
+    #        return
+
+    #    for key in sorted(self.xhash.keys()):
+    #1        if key not in self.ghash:
+                
