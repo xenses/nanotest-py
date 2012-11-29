@@ -78,7 +78,7 @@ class Nanotester:
     def _hash_n_comp(self, xpmtl, given, msg, invert):
         self.nodestack = []
         self.xhash = {}
-        self._hash(given, self.xhash)
+        self._hash(xpmtl, self.xhash)
         self.nodestack = []
         self.ghash = {}
         self._hash(given, self.ghash)
@@ -114,8 +114,8 @@ class Nanotester:
             if not mismatch:
                 mismatch = self._inv_compare(self.ghash, self.xhash)
             if not mismatch:
-                self.nodestack.append(self._result(False, None, None, msg, "structs were identical"))
-            self.nodestack.append(self._result(True, None, None, msg, None))
+                self.results.append(self._result(False, None, None, msg, "structs were identical"))
+            self.results.append(self._result(True, None, None, msg, None))
     #    for key in sorted(self.xhash.keys()):
     #        if key not in self.ghash:
                 
