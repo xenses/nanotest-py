@@ -69,9 +69,10 @@ def process_tests(tests):
         else:
             output += "    test {} ({}) on line {} failed\n".format(testnum, t["msg"], t["line"])
             for c in t["comp"]:
-                if c["reason"]: output += "      {}\n".format(c["reason"])
-                output += "        expected: '{}'\n".format(c["xpect"])
-                output += "        got:      '{}'\n".format(c["got"])
+                if c["reason"]: output += "        {}\n".format(c["reason"])
+                if c["xpect"] != None and c["got"] != None:
+                    output += "        expected: '{}'\n".format(c["xpect"])
+                    output += "        got:      '{}'\n".format(c["got"])
     return passing, output
 
 # ----------------------------------------------------------------------- main
