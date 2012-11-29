@@ -9,6 +9,8 @@ class Nanotester:
     def __init__(self):
         self.results   = []
         self.nodestack = []
+        self.xhash = {}
+        self.ghash = {}
         self.re_re   = re.compile("\:re\:")
         self.re_type = re.compile("\:ty\:")
 
@@ -106,13 +108,25 @@ class Nanotester:
             key = ".".join(self.nodestack)
             hashdict[key] = element
 
+    def _inv_compare(self, a, b):
+        for key in sorted(a.keys()):
+            if key not in b:
+                return True
+            else:
+                self._test_scalar(a[key], b[key], "", False)
+                if not self.results[-1]["pass"]:
+                    self.results.pop()
+                    return True
+                self.results.pop()
+        return False
+
     #def _compare(self, msg, invert):
-    #    bad = 0
     #    if invert:
-    #        for key in sorted(self.xhash.keys()):
-    #            if key in self.ghash: bad += 1
+    #        mismatch = self._inv_compare(self.xhash, self.ghash)
+    #        if not mismatch:
+    #            mismatch = self._inv_compare(self.ghash, self.xhash)
     #        return
 
     #    for key in sorted(self.xhash.keys()):
-    #1        if key not in self.ghash:
+    #        if key not in self.ghash:
                 
