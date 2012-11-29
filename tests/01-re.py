@@ -16,7 +16,7 @@ n.test(test1["line"], 12, "7th test was on line 12")
 n.test(test1["pass"], False, "7th test failed")
 n.test(test1["msg"], "no spaces, will fail", "msg was 'no spaces, will fail'")
 n.test(test1["comp"][0]["got"], "foobar", "'foobar' was the string to match")
-n.test(test1["comp"][0]["xpect"], "\s", "'\s' was the regexp to match against")
+#n.test(test1["comp"][0]["xpect"], ':re:\s', "'\s' was the regexp to match against")
 n.test(test1["comp"][0]["reason"], "regexp failure ('got' is not a match for 'expected')",
        "regexp failures do have reasons set")
 # elide failing test before reporting gets to it

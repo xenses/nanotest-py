@@ -122,12 +122,19 @@ class Nanotester:
         for key in sorted(self.xhash.keys()):
             if key not in self.ghash:
                 if failed:
+                    self.results[-1]["comp"].append(self._subresult(key, "None", "node only in experimental struct"))
+                else:
                     failed = True
                     self.results.append(self._result(False, key, "None", msg, "node only in experimental struct"))
-                else:
-                    self.results[-1]["comp"].append(self._subresult(given, xpmtl, "node only in experimental struct"))
             else:
-                pass
+                passed, reason = self._test_scalar(self.xhash[key], self.ghash[key], None, False)
+                if not passed:
+                    if failed:
+                        self.results[-1]["comp"].append(self._subresult(self.ghash[key], self.xhash[key], reason))
+                    else:
+                        failed = True
+                        self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, reason))
+                    
 
     def _inv_compare(self, a, b):
         for key in sorted(a.keys()):

@@ -73,7 +73,7 @@ def process_tests(tests):
             output += "    test {} ({}) on line {} failed\n".format(testnum, t["msg"], t["line"])
             for c in t["comp"]:
                 # if there's a reason given in the test, output it
-                if c["reason"]: output += "        {}\n".format(c["reason"])
+                if c["reason"]: output += "      {}\n".format(c["reason"])
                 # and show the xpect/got vals unless both are None
                 if c["xpect"] != None and c["got"] != None:
                     output += "        expected: '{}'\n".format(c["xpect"])
