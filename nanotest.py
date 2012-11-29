@@ -14,7 +14,7 @@ class Nanotester:
         self.re_re   = re.compile("\:re\:")
         self.re_type = re.compile("\:ty\:")
 
-    def _subresult(self, given, xpmtl, reason):
+    def _subresult(self, xpmtl, given, reason):
         sres = {}
         sres["xpect"]  = given
         sres["got"]    = xpmtl
@@ -36,7 +36,7 @@ class Nanotester:
         res["pass"]  = success
         res["msg"]  = msg
         res["comp"] = []
-        res["comp"].append(self._subresult(given, xpmtl, reason))
+        res["comp"].append(self._subresult(xpmtl, given, reason))
         return res
 
     def test(self, xpmtl, given, msg, invert=False):
@@ -46,33 +46,34 @@ class Nanotester:
         elif isinstance(xpmtl, (tuple, list, dict)):
             self._hash_n_comp(xpmtl, given, msg, invert)
         else:
-            self._test_scalar(xpmtl, given, msg, invert)
+            passed, reason = self._test_scalar(xpmtl, given, msg, invert)
+            self.results.append(self._result(passed, given, xpmtl, msg, reason))
+                
 
     def untest(self, xpmtl, given, msg):
         self.test(xpmtl, given, msg, invert=True)
 
     def _test_scalar(self, xpmtl, given, msg, invert):
         if self.re_re.match(str(given)):
-            self._re_match(xpmtl, given, msg, invert)
+            return self._re_match(xpmtl, given, msg, invert)
         else:
-            self._is_eq(xpmtl, given, msg, invert)
+            return self._is_eq(xpmtl, given, msg, invert)
 
     def _is_eq(self, xpmtl, given, msg, invert):
         if (xpmtl == given and invert == False) or (xpmtl != given and invert == True):
-            self.results.append(self._result(True, given, xpmtl, msg, None))
+            return True, None
         else:
-            self.results.append(self._result(False, given, xpmtl, msg, None))
+            return False, None
 
     def _re_match(self, xpmtl, given, msg, invert):
         restr = given[4:]
         if re.search(restr, str(xpmtl)):
-            self.results.append(self._result(True, restr, xpmtl, msg, None))
+            return True, None
         else:
             if invert:
-                self.results.append(self._result(True, restr, xpmtl, msg, None))
+                return True, None
             else:
-                self.results.append(self._result(False, restr, xpmtl, msg,
-                                                 "regexp failure ('got' is not a match for 'expected')"))
+                return False, "regexp failure ('got' is not a match for 'expected')"
 
 
     def _hash_n_comp(self, xpmtl, given, msg, invert):
@@ -116,17 +117,23 @@ class Nanotester:
             if not mismatch:
                 self.results.append(self._result(False, None, None, msg, "structs were identical"))
             self.results.append(self._result(True, None, None, msg, None))
-    #    for key in sorted(self.xhash.keys()):
-    #        if key not in self.ghash:
-                
+            return
+        failed = False
+        for key in sorted(self.xhash.keys()):
+            if key not in self.ghash:
+                if failed:
+                    failed = True
+                    self.results.append(self._result(False, key, "None", msg, "node only in experimental struct"))
+                else:
+                    self.results[-1]["comp"].append(self._subresult(given, xpmtl, "node only in experimental struct"))
+            else:
+                pass
+
     def _inv_compare(self, a, b):
         for key in sorted(a.keys()):
             if key not in b:
                 return True
             else:
-                self._test_scalar(a[key], b[key], "", False)
-                if not self.results[-1]["pass"]:
-                    self.results.pop()
-                    return True
-                self.results.pop()
+                passed, reason = self._test_scalar(a[key], b[key], None, False)
+                if not passed: return True
         return False
