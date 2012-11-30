@@ -119,14 +119,20 @@ class Nanotester:
             self.results.append(self._result(True, None, None, msg, None))
             return
         
-        failed = False        
+        failed = False
+        failkeys = []
         for key in sorted(self.xhash.keys()):
+            fkmatch = False
+            for fk in failkeys:
+                if re.match(fk, key): fkmatch = True
+            if fkmatch: continue
             if key not in self.ghash:
-                result = "node {} (value '{}') only in exp. struct".format(key, self.xhash[key])
+                result = "node {} (value '{}') only in experimental struct".format(key, self.xhash[key])
                 if failed:
                     self.results[-1]["comp"].append(self._subresult(None, None, result))
                 else:
                     failed = True
+                    failkeys.append(key[:-2])
                     self.results.append(self._result(False, None, None, msg, result))
             else:
                 passed, reason = self._test_scalar(self.ghash[key], self.xhash[key], None, False)
@@ -138,12 +144,17 @@ class Nanotester:
                         failed = True
                         self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, result))
         for key in sorted(self.ghash.keys()):
+            fkmatch = False
+            for fk in failkeys:
+                if re.match(fk, key): fkmatch = True
+            if fkmatch: continue
             if key not in self.xhash:
                 result = "node {} (value '{}') only in given struct".format(key, self.ghash[key])
                 if failed:
                     self.results[-1]["comp"].append(self._subresult(None, None, result))
                 else:
                     failed = True
+                    failkeys.append(key[:-2])
                     self.results.append(self._result(False, None, None, msg, result))
         if not failed:
             self.results.append(self._result(True, None, None, msg, None))
