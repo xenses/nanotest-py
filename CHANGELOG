@@ -1,5 +1,18 @@
 nanotest-py Changelog
 
+2.0.0	xx Nov 2012
+
+	BACKWARD INCOMPATIBLE MAJOR RELEASE. High points follow; see
+	README for complete info.
+
+	Test runner/harness renamed to `nanotest-py`. See README for add'l
+	upgrade info.
+
+	Module is now object-based. API changed to `n.test` (for equality)
+	and `n.untest` (for inequality). 
+
+	Added developer test scripts, which are not run by default.
+
 1.2.1	  17 Nov 2012
 
 	  Bugfix: setting TERM to 'dumb' is necessary under some
