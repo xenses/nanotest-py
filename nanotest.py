@@ -118,23 +118,35 @@ class Nanotester:
                 self.results.append(self._result(False, None, None, msg, "structs were identical"))
             self.results.append(self._result(True, None, None, msg, None))
             return
-        failed = False
+        
+        failed = False        
         for key in sorted(self.xhash.keys()):
             if key not in self.ghash:
+                result = "node {} (value '{}') only in exp. struct".format(key, self.xhash[key])
                 if failed:
-                    self.results[-1]["comp"].append(self._subresult(key, "None", "node only in experimental struct"))
+                    self.results[-1]["comp"].append(self._subresult(None, None, result))
                 else:
                     failed = True
-                    self.results.append(self._result(False, key, "None", msg, "node only in experimental struct"))
+                    self.results.append(self._result(False, None, None, msg, result))
             else:
-                passed, reason = self._test_scalar(self.xhash[key], self.ghash[key], None, False)
+                passed, reason = self._test_scalar(self.ghash[key], self.xhash[key], None, False)
                 if not passed:
+                    result= "node {} values don't match".format(key)
                     if failed:
-                        self.results[-1]["comp"].append(self._subresult(self.ghash[key], self.xhash[key], reason))
+                        self.results[-1]["comp"].append(self._subresult(self.ghash[key], self.xhash[key], result))
                     else:
                         failed = True
-                        self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, reason))
-                    
+                        self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, result))
+        for key in sorted(self.ghash.keys()):
+            if key not in self.xhash:
+                result = "node {} (value '{}') only in given struct".format(key, self.ghash[key])
+                if failed:
+                    self.results[-1]["comp"].append(self._subresult(None, None, result))
+                else:
+                    failed = True
+                    self.results.append(self._result(False, None, None, msg, result))
+        if not failed:
+            self.results.append(self._result(True, None, None, msg, None))
 
     def _inv_compare(self, a, b):
         for key in sorted(a.keys()):
