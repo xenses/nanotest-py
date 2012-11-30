@@ -34,9 +34,8 @@ class Nanotester:
         reason = None
         if len(args) > 0:
             reason = args[0]
-        # get filename, line num, stuff. should always want the -2nd
-        # frame in the stack, since -1 is the exec(). this may need to
-        # be cased when test injection is implemented
+        # get filename, line num, stuff. should always want the -2nd frame in the stack, since -1 is the exec(). this 
+        # may need to be cased when test injection is implemented
         frame = inspect.getouterframes(inspect.currentframe())[-2]
         # frame, filename, linenum, function_name, lines, index
         res["file"]  = frame[1]
@@ -78,6 +77,7 @@ class Nanotester:
 
 
     def _hash_n_comp(self, xpmtl, given, msg, invert):
+        # just a helper function which resets states, hashes the structs to be compared, then calls _compare()
         self.nodestack = []
         self.xhash = {}
         self._hash(xpmtl, self.xhash)
@@ -90,12 +90,15 @@ class Nanotester:
         if isinstance(element, (tuple, list, dict)):
             # composites are handled here
             if isinstance(element, (dict,)):
+                # for dicts we push a 'd' onto the stack for "dict",then push each dict key onto the stack and call
+                # ourselves on that key's value
                 self.nodestack.append('d')
                 for key in sorted(element.keys(), key=lambda key: str(key)):
                     self.nodestack.append(str(key))
                     self._hash(element[key], hashdict)
                     self.nodestack.pop()
             else:
+                # lists and tuples are handled like dicts, but get 'l' or 't' on the stack
                 if isinstance(element, (list,)):
                     self.nodestack.append('l')
                 else:
@@ -106,12 +109,14 @@ class Nanotester:
                     self.nodestack.pop()
             self.nodestack.pop()
         else:
-            # leafnodes handled here
+            # leafnodes (scalar values) handled here
             key = ".".join(self.nodestack)
             hashdict[key] = element
 
     def _compare(self, msg, invert):
         if invert:
+            # for an inverted test, our only failure condition is equality. a single mismatch is enough to declare
+            # success and return.
             mismatch = self._inv_compare(self.xhash, self.ghash)
             if not mismatch:
                 mismatch = self._inv_compare(self.ghash, self.xhash)
@@ -119,23 +124,30 @@ class Nanotester:
                 self.results.append(self._result(False, None, None, msg, "structs were identical"))
             self.results.append(self._result(True, None, None, msg, None))
             return
-        
+
+        # normal compares are more complex.
         failed = False
         failkeys = []
         for key in sorted(self.xhash.keys()):
+            # see if the current key has any of failkeys[] as a prefix. if so, we do not want to proceed; we'll
+            # just be producing mismatch cascade errors
             fkmatch = False
             for fk in failkeys:
                 if re.match(fk, key): fkmatch = True
             if fkmatch: continue
+            # actual comparison starts here
             if key not in self.ghash:
+                # key mismatch results in adding a mismatch condition to this test's result. the tests for 'failed'
+                # let us know whether we're adding the FIRST mismatch or not. only compares have this tracking
                 result = "node {} (value '{}') only in experimental struct".format(key, self.xhash[key])
                 if failed:
                     self.results[-1]["comp"].append(self._subresult(None, None, result))
                 else:
                     failed = True
-                    failkeys.append(key[:-2])
+                    failkeys.append(key[:-2]) # key mismatch; add (most of) key to failkeys[]
                     self.results.append(self._result(False, None, None, msg, result))
             else:
+                # if the key exists in xhash + ghash, call _test_scalar() to see if they are eqivalent
                 passed, reason = self._test_scalar(self.ghash[key], self.xhash[key], None, False)
                 if not passed:
                     result= "node {} values don't match".format(key)
@@ -144,6 +156,8 @@ class Nanotester:
                     else:
                         failed = True
                         self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, result))
+        # normal compare, step 2: repeat key comparison with ghash as the source. there's no need to check scalars
+        # because we've already tested everything which is in both structs.
         failkeys = []
         for key in sorted(self.ghash.keys()):
             fkmatch = False
@@ -158,6 +172,7 @@ class Nanotester:
                     failed = True
                     failkeys.append(key[:-2])
                     self.results.append(self._result(False, None, None, msg, result))
+        # finally, if failed still isn't True, then the compare is a pass
         if not failed:
             self.results.append(self._result(True, None, None, msg, None))
 
