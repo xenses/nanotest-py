@@ -217,7 +217,7 @@ test data.
 
 In the case of failure, however, there will be one element in the
 `comp` list (in JSON mode) or one printed diagnostic (in the default
-console report mode)_for each mismatch_ between the two
+console report mode) for _every mismatch_ between the two
 structures. The exception to this is that when a missing node is
 encountered, no siblings or child nodes will be examined, as this
 could cause large cascades of spurious mismatch reports.
@@ -225,12 +225,40 @@ could cause large cascades of spurious mismatch reports.
 Finally, any and all values in the given struct of a test can be
 regexps, just as any given value in a test with two scalar values can.
 
-### Developer tests
+Developer tests
+---------------
 
+The purpose of testing is to prove, to the best of one's ability, that
+software does what one believes it does, and behaves as one believes
+it should behave.
 
+A problem with this is that sometimes, as the developer of a piece of
+software, you want to test for the expected _failures,_ but including
+these sorts of tests in a suite would be, to users running the suite
+to prove your software, irritating at best.
 
+One solution is write tests which succeed by testing for the results
+of failure. Another is to use inversions of logic to turn a failure
+into a success (and thus a passing test). But neither of these is the
+right choice all the time.
+
+For those times, `nanotest-py` supports the concept of developer
+tests: test scripts which are not run by default. To make a script
+into a devtest, just give it a name ending with `DEV.py`. These
+scripts are run only when the `--dev` option is passed to the nanotest
+runner.
 
 Test injection
 --------------
 
-Coming soon.
+Coming in v2.1.0!
+
+
+---
+
+I hope you find nanotest useful. If you have any questions,
+suggestions, or other comments, please contact me by email or through
+Github.
+
+Shawn Boyette
+<shawn@firepear.net>
