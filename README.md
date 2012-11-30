@@ -85,22 +85,27 @@ names match `*.py` will be treated as test scripts.
 
 By default, after the tests have been run, diagnostic information
 about failing tests will be printed to the console. This is what
-nanotest's own test suite looke like:
+nanotest's own test suite looks like:
 
 ```
-  $ nanotest-py
-  TODO PLUG THIS IN AFTER THINGS SETTLE
-  $
+$ nanotest-py
+./tests/00-core.py      18/18 passing    ok
+./tests/01-re.py        12/12 passing    ok
+./tests/02-hash.py      26/26 passing    ok
+./tests/03-invcomp.py   3/3 passing      ok
+./tests/04-comp.py      3/3 passing      ok
+62/62 passing in 5 files
+$
 ```
 
-Specific test scripts instead of the whole suite:
+It is possible to run specific scripts instead of the whole suite:
 
 ```
-  # run just one script
-  nanotest-py tests/test1.py
+# run just one script
+nanotest-py tests/test1.py
 
-  # run two, in this order
-  nanotest-py tests/test3.py tests/test1.py
+# run two, in this order
+nanotest-py tests/test3.py tests/test1.py
 ```
 
 ### Silent mode
@@ -136,8 +141,8 @@ datastructres may generate a list of many objects if the structs do
 not match.
 
 
-How to write tests
-------------------
+Writing tests
+-------------
 
 `nanotest` is an object-based module. The boilerplate for a test
 script is
@@ -154,12 +159,11 @@ object has a different name, the test harness (`nanotest-py`) will not
 be able to examine the results of the tests, and that script as a
 whole will be treated as a no-op.
 
-Tests in nanotest-py are calls to `pis()`, `pisnt()`, or
-`pis_deeply()`. This makes it easy to write tests as you code. Anytime
-you add new code, correct a bug, or refactor something, that's a good
-time to write a test (or, if you have a test suite, to rerun it).
+Individual tests in are simply calls to `n.test()` (to test for
+equality) or `n.untest()` (to test for inequality). This makes it easy
+to write tests as you code.
 
-All three functions take three arguments, in the same order:
+Both functions take three arguments, in the same order:
 
 * The experimental value (the value to be tested)
 
@@ -168,68 +172,65 @@ All three functions take three arguments, in the same order:
 * A message string (printed if the test fails, to help identify the
   failing test)
 
-All three functions do the same thing: test their *experimental* and
-*given* values for equivalence. All three functions return True or
-False.
-
-nanotest-py is not a strict, blackbox, unit testing library. It can be
-used as such, but it can also poke at the internals of objects,
-examine program state variables, and generally inspect anything that a
-programmer can get a handle on at any point in a program's life.
-
-### Examples
+Nanotest is not a strict, blackbox, unit testing library. It can be
+used as such, but since tests are just method calls, it can also poke
+at the internals of objects, examine program state variables, and
+generally inspect anything that a programmer can get a handle on at
+any point in a program's life.
 
 ```
->>> pis_deeply((1, 'a', 34), (1, 'a', 34), "identical tuples")
-True
->>> struct = {'a':1, 'q':[11, 22, ('x', 'y'), 33], 'c':{'z':44}}
->>> pis_deeply(struct, struct, "identical blended composites")
-True
->>> # these next two are failures, and will produce diagnostic output
-... pis_deeply({'a':1}, {'a':1, 'b':2}, "these don't match")
-FAILED test 5: these don't match
-   Node root.dict.b exists in given struct but not experimental struct
-False
->>> struct1 = {'a':1, 'q':[11, 22, ('x', 'y'), 33], 'c':{'z':44}}
->>> struct2 = {'a':1, 'q':[11, 22, ('x', 'q'), 33], 'c':{'z':44}}
->>> pis_deeply(struct1, struct2, "these don't match either")
-FAILED test 6: these don't match either
-   Values at root.dict.q.list.2.tuple.1 don't match
-   Expected 'y'; got 'q'
-False
+n.test(1, 1, "Yes, of course")
+n.test((2 + 2), 4, "Expressions are allowed")
+n.test(myvar, 
+n.test(myfunc(withargs), False, "This is a pass if myfunc returns False")
 ```
 
-### Regexes
+### Testing with regexeps
 
 Frequently, in the real world, it is impossible to know exactly what a
 value will be.  It may only be known that a value must be numeric, or
-of a certain form (like a phone number).
+that it will take a certain form (like a phone number).
 
-`nanotest` allows these kinds of comparisons in tests by using regular
+Nanotest allows these kinds of comparisons in tests by using regular
 expression searches.  If a test's `given` value is a string which
 begins with `:re:`, the remainder of the string is used as a regex
 which the experimental value is matched
 
 ```
-n.test('4873 2767 0909 2763', ':re:4\d{3} \d{4} \d{4} \d{4}', "visa number")
-n.untest("Agamemnon Q. Huxtable", ':re:\d', "No numbers allowed in names")
+n.test(user.ccn, ':re:4\d{3}\s?\d{4}\s?\d{4}\s?\d{4}', "Should be a valid visa number")
+n.untest(user.name, ':re:\d', "Form should have disallowed numbers in names")
 ```
 
-This is also allowed with any and all values in the given struct of a
-deep comparison.
+### Comparing datastructures
 
-```
-# set up a string that matches a v4 (random) uuid
-v4uuid = ':re:[\0-9a-f]{8}\-[0-9a-f]{4}\-4[0-9a-f]{3}\-[89ab][0-9a-f]{3}\-[0-9a-f]{12}'
-# now mock up an object containing a random UUID
-exp_val = { 'a':1, 'b':2, 'c':uuid.uuid4() }
-# {'a': 1, 'c': UUID('0c490083-47b0-4462-a1fb-af6a593dc3fd'), 'b': 2}
-n.test(exp_val, {'a':1, 'b':2, 'c':v4uuid}, "c will match using the stored regex")
-True
-```
+Nanotest is not limited to comparing scalar values. If both arguments
+to `test()` (or `untest()`) are a list, tuple, or dict, the structures
+will be tested to see if:
+
+* they have the same number of elements
+* they have the same type of elements, in the same places
+* all matching elements hold the same value
+
+If all these conditions are met, for all nodes of both structs, the
+test passes. In JSON output mode, there will be a single entry in the
+test data.
+
+In the case of failure, however, there will be one element in the
+`comp` list (in JSON mode) or one printed diagnostic (in the default
+console report mode)_for each mismatch_ between the two
+structures. The exception to this is that when a missing node is
+encountered, no siblings or child nodes will be examined, as this
+could cause large cascades of spurious mismatch reports.
+
+Finally, any and all values in the given struct of a test can be
+regexps, just as any given value in a test with two scalar values can.
+
+### Developer tests
+
+
 
 
 Test injection
---------------------
+--------------
 
 Coming soon.
