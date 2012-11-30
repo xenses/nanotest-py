@@ -8,9 +8,9 @@ setup( name = "nanotest",
        author = "Shawn Boyette",
        author_email = "shawn@firepear.net",
        url = "https://github.com/firepear/nanotest-py",
-       py_modules=["nanotest"],
-       scripts=['bin/nanotest-py']
-       classifiers=[
+       py_modules = ["nanotest"],
+       scripts = ['bin/nanotest-py'],
+       classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Development Status :: 5 - Production/Stable",
