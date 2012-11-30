@@ -176,12 +176,12 @@ Nanotest is not a strict, blackbox, unit testing library. It can be
 used as such, but since tests are just method calls, it can also poke
 at the internals of objects, examine program state variables, and
 generally inspect anything that a programmer can get a handle on at
-any point in a program's life.
+any point in a program's life. Some examples:
 
 ```
 n.test(1, 1, "Yes, of course")
-n.test((2 + 2), 4, "Expressions are allowed")
-n.test(myvar, 
+n.test(myvar, somevalue, "Another simple test")
+n.test((2 + 2), 4, "Expressions on both sides will be evaluated")
 n.test(myfunc(withargs), False, "This is a pass if myfunc returns False")
 ```
 
@@ -233,14 +233,14 @@ software does what one believes it does, and behaves as one believes
 it should behave.
 
 A problem with this is that sometimes, as the developer of a piece of
-software, you want to test for the expected _failures,_ but including
-these sorts of tests in a suite would be, to users running the suite
-to prove your software, irritating at best.
+software, you want to test for expected _failure,_ But including these
+sorts of tests in a suite would be, to users running the suite to
+prove your software, irritating at best and off-putting at worst.
 
-One solution is write tests which succeed by testing for the results
-of failure. Another is to use inversions of logic to turn a failure
-into a success (and thus a passing test). But neither of these is the
-right choice all the time.
+One solution is write tests which succeed by testing for the
+side-effects or results of a failure. Another is to use inversions of
+logic to turn a failure into a success (and thus a passing test). But
+sometimes neither of these what you want.
 
 For those times, `nanotest-py` supports the concept of developer
 tests: test scripts which are not run by default. To make a script
