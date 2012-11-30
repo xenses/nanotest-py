@@ -4,22 +4,30 @@ import re
 version = "v2.0.0"
 
 class Nanotester:
-    """
-    """
+    """Initialize a nanotest tester object."""
     def __init__(self):
-        self.results   = []
-        self.nodestack = []
-        self.xhash = {}
-        self.ghash = {}
+        self.results   = [] # test results go here
+        self.nodestack = [] # used to build hash for struct compares
+        self.xhash = {}     # experimental struct hash
+        self.ghash = {}     # given struct hash
         self.re_re   = re.compile("\:re\:")
         self.re_type = re.compile("\:ty\:")
 
-    def _subresult(self, xpmtl, given, reason):
-        sres = {}
-        sres["xpect"]  = given
-        sres["got"]    = xpmtl
-        sres["reason"] = reason
-        return sres
+    def test(self, xpmtl, given, msg, invert=False):
+        """Test two values for equality"""
+        if type(xpmtl) != type(given):
+            res = self._result(False, type(given), type(xpmtl), msg, "Types don't match")
+            self.results.append(res)
+        elif isinstance(xpmtl, (tuple, list, dict)):
+            self._hash_n_comp(xpmtl, given, msg, invert)
+        else:
+            passed, reason = self._test_scalar(xpmtl, given, msg, invert)
+            self.results.append(self._result(passed, given, xpmtl, msg, reason))
+                
+
+    def untest(self, xpmtl, given, msg):
+        """Test two values for inequality"""
+        self.test(xpmtl, given, msg, invert=True)
 
     def _result(self, success, given, xpmtl, msg, *args):
         res = {}
@@ -39,19 +47,12 @@ class Nanotester:
         res["comp"].append(self._subresult(xpmtl, given, reason))
         return res
 
-    def test(self, xpmtl, given, msg, invert=False):
-        if type(xpmtl) != type(given):
-            res = self._result(False, type(given), type(xpmtl), msg, "Types don't match")
-            self.results.append(res)
-        elif isinstance(xpmtl, (tuple, list, dict)):
-            self._hash_n_comp(xpmtl, given, msg, invert)
-        else:
-            passed, reason = self._test_scalar(xpmtl, given, msg, invert)
-            self.results.append(self._result(passed, given, xpmtl, msg, reason))
-                
-
-    def untest(self, xpmtl, given, msg):
-        self.test(xpmtl, given, msg, invert=True)
+    def _subresult(self, xpmtl, given, reason):
+        sres = {}
+        sres["xpect"]  = given
+        sres["got"]    = xpmtl
+        sres["reason"] = reason
+        return sres
 
     def _test_scalar(self, xpmtl, given, msg, invert):
         if self.re_re.match(str(given)):
@@ -143,6 +144,7 @@ class Nanotester:
                     else:
                         failed = True
                         self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, result))
+        failkeys = []
         for key in sorted(self.ghash.keys()):
             fkmatch = False
             for fk in failkeys:
