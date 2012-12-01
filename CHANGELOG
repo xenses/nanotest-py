@@ -11,7 +11,11 @@ nanotest-py Changelog
 	Module is now object-based. API changed to `n.test` (for equality)
 	and `n.untest` (for inequality). 
 
+	Full test data now available in JSON format.
+
 	Added developer test scripts, which are not run by default.
+
+	`quiet` mode has been removed.
 
 1.2.1	  17 Nov 2012
 
