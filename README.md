@@ -47,31 +47,6 @@ one or both of these paths:
 My apologies for this being necessary.
 
 
-Changes in version 2
-----------------------------------
-
-Nanotest 2 is a near-total rewrite, and as the major version number
-bump indicates, it is backward-incompatible with the version 1
-interface.
-
-The major, incompatible changes are, in summary:
-
-* The module is now object-based, and exports no symbols.
-
-* The number of testing functions (now methods) is reduced to two.
-
-* The module no longer relies on subprocesses and parsing textual
-  output.
-  
-* Test results are now available as a report (old style) or as
-  unparsed, JSON-formatted data.
-  
-* `--quiet` mode no longer exists.
-
-Please keep reading for more complete information.
-
-
-
 Tutorial
 ========
 
@@ -83,9 +58,9 @@ project. It will scan that directory, and all subdirctories, for
 directories named `tests/`. Any files in these directories whose names
 match `*.py` will be treated as test scripts.
 
-By default, after the tests have been run, diagnostic information
-about failing tests will be printed to the console. This is what
-nanotest's own test suite looks like:
+After the tests have been run, diagnostic information about failing
+tests will be printed to the console. This is what nanotest's own test
+suite looks like:
 
 ```
 $ nanotest-py
