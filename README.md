@@ -78,10 +78,10 @@ Tutorial
 Running tests
 -------------
 
-After installation, run `nanotest-py` from the top-level directory of
-a project. It will search the filesystem subtree under that directory
-for directories named `tests`. Any files in these directories whose
-names match `*.py` will be treated as test scripts.
+After installation, run `nanotest-py` in the top-level directory of a
+project. It will scan that directory, and all subdirctories, for
+directories named `tests/`. Any files in these directories whose names
+match `*.py` will be treated as test scripts.
 
 By default, after the tests have been run, diagnostic information
 about failing tests will be printed to the console. This is what
