@@ -1,7 +1,7 @@
 import inspect
 import re
 
-version = "v2.0.0"
+version = "v2.0.1"
 
 class Nanotester:
     """Initialize a nanotest tester object."""
