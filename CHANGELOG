@@ -1,9 +1,15 @@
 nanotest-py Changelog
 
+2.0.2	09 Jan 2013
+
+	Bugfix: Previous bugfix was wrong-headed. Prepending '.' to
+	sys.path is usually the right thing. Appending is now an option
+	(-n / --noprepend)
+
 2.0.1	03 Dec 2012
 
 	Bugfix: append to sys.path instead of pushing onto it
-	
+
 2.0.0	30 Nov 2012
 
 	BACKWARD INCOMPATIBLE MAJOR RELEASE. High points follow; see
