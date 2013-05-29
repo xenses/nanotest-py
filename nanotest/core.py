@@ -1,4 +1,7 @@
 import inspect
+import re
+
+# ----------------------------------------------------------- results handling
 
 def result(self, success, given, xpmtl, msg, *args):
     res = {}
@@ -24,9 +27,11 @@ def subresult(xpmtl, given, reason):
     sres["reason"] = reason
     return sres
 
+# ---------------------------------------------------------------- comparisons
+
 def comp(self, xpmtl, given, msg, invert):
     if self.re_re.match(str(given)):
-        return self._re_match(xpmtl, given, msg, invert)
+        return re_match(xpmtl, given, msg, invert)
     else:
         return is_eq(xpmtl, given, msg, invert)
 
@@ -36,7 +41,7 @@ def is_eq(xpmtl, given, msg, invert):
     else:
         return False, None
 
-def _re_match(self, xpmtl, given, msg, invert):
+def re_match(xpmtl, given, msg, invert):
     restr = given[4:]
     if re.search(restr, str(xpmtl)):
         return True, None
