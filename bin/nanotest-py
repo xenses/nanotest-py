@@ -21,7 +21,7 @@ if args.silent:
 if args.noprepend:
     sys.path.append('./')
 else:
-    tmpary = ["./"]
+    tmpary = ["./",]
     tmpary.extend(sys.path)
     sys.path = tmpary
 
