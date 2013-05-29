@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description="Find any and all files matching '*
 parser.add_argument("-j", "--json", action="store_true", help ="Dump all test results to STDOUT as JSON (disables other output; result will be an empty list if no tests are found)")
 parser.add_argument("-s", "--silent", action="store_true", help ="Output nothing at all, indicating test failure by return code (0: success, 1: failure, 2: no tests found)")
 parser.add_argument("-n", '--noprepend', action="store_true", help="Do not prepend the current directory to sys.path; append instead")
-parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.0.2')
+parser.add_argument("-v", '--version', action='version', version='%(prog)s 2.1.0')
 parser.add_argument("-d", "--dev", action="store_true", help ="Run developer tests also")
 parser.add_argument('testfiles', metavar="TEST", nargs="*",  help="Execute specified test files instead of searching tree")
 args = parser.parse_args()
