@@ -56,13 +56,13 @@ def deepcomp(self, xpmtl, given, msg, invert):
     # just a helper function which resets states, hashes the structs to be compared, then calls _compare()
     self.nodestack = []
     self.xhash = {}
-    self._hash(xpmtl, self.xhash)
+    hash(xpmtl, self.xhash)
     self.nodestack = []
     self.ghash = {}
-    self._hash(given, self.ghash)
-    self._compare(msg, invert)
+    hash(given, self.ghash)
+    compare(msg, invert)
 
-def _hash(self, element, hashdict):
+def hash(self, element, hashdict):
     if isinstance(element, (tuple, list, dict)):
         # composites are handled here
         if isinstance(element, (dict,)):
@@ -71,7 +71,7 @@ def _hash(self, element, hashdict):
             self.nodestack.append('d')
             for key in sorted(element.keys(), key=lambda key: str(key)):
                 self.nodestack.append(str(key))
-                self._hash(element[key], hashdict)
+                hash(self, element[key], hashdict)
                 self.nodestack.pop()
         else:
             # lists and tuples are handled like dicts, but get 'l' or 't' on the stack
@@ -81,7 +81,7 @@ def _hash(self, element, hashdict):
                 self.nodestack.append('t')
             for idx, subelem in enumerate(element):
                 self.nodestack.append(str(idx))
-                self._hash(subelem, hashdict)
+                hash(self, subelem, hashdict)
                 self.nodestack.pop()
         self.nodestack.pop()
     else:
@@ -89,7 +89,7 @@ def _hash(self, element, hashdict):
         key = ".".join(self.nodestack)
         hashdict[key] = element
 
-def _compare(self, msg, invert):
+def compare(self, msg, invert):
     if invert:
         # for an inverted test, our only failure condition is equality. a single mismatch is enough to declare
         # success and return.
