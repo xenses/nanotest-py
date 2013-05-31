@@ -16,14 +16,14 @@ t3 = [ {'a':[1, 2, 3], 'b':{'c':"d", 'e':"g"}},
        ("foo", "bar"),
        [["x", "y", "z"], 37, 42 ] ]
 
-n._hash(t1, n.xhash) # hash t1 into n.xhash
+nanotest.core.hash(n, t1, n.xhash) # hash t1 into n.xhash
 n.ghash = n.xhash    # copy xhash to ghash
-n.test(n._inv_compare(n.xhash, n.ghash), False, "inv_compare on identity should be False")
+n.test(nanotest.core.inv_compare(n, n.xhash, n.ghash), False, "inv_compare on identity should be False")
 
 n.ghash = {}
-n._hash(t2, n.ghash)
-n.test(n._inv_compare(n.xhash, n.ghash), True, "different elements; should be True")
+nanotest.core.hash(n, t2, n.ghash)
+n.test(nanotest.core.inv_compare(n, n.xhash, n.ghash), True, "different elements; should be True")
 
 n.ghash = {}
-n._hash(t3, n.ghash)
-n.test(n._inv_compare(n.xhash, n.ghash), True, "different values; should be True")
+nanotest.core.hash(n, t3, n.ghash)
+n.test(nanotest.core.inv_compare(n, n.xhash, n.ghash), True, "different values; should be True")

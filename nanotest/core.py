@@ -63,6 +63,7 @@ def deepcomp(self, xpmtl, given, msg, invert):
     compare(msg, invert)
 
 def hash(self, element, hashdict):
+    # FIXME see if this can be rewritten without self
     if isinstance(element, (tuple, list, dict)):
         # composites are handled here
         if isinstance(element, (dict,)):
@@ -90,6 +91,7 @@ def hash(self, element, hashdict):
         hashdict[key] = element
 
 def compare(self, msg, invert):
+    # FIXME see if this can be rewritten without self
     if invert:
         # for an inverted test, our only failure condition is equality. a single mismatch is enough to declare
         # success and return.
@@ -152,11 +154,12 @@ def compare(self, msg, invert):
     if not failed:
         self.results.append(self._result(True, None, None, msg, None))
 
-def _inv_compare(self, a, b):
+def inv_compare(self, a, b):
+    # FIXME only requires self because comp() needs it
     for key in sorted(a.keys()):
         if key not in b:
             return True
         else:
-            passed, reason = self._test_scalar(a[key], b[key], None, False)
+            passed, reason = comp(self, a[key], b[key], None, False)
             if not passed: return True
     return False
