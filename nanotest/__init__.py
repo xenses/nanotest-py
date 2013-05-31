@@ -19,7 +19,7 @@ class Nanotester:
             res = nc.result(self, False, type(given), type(xpmtl), msg, "Types don't match")
             self.results.append(res)
         elif isinstance(xpmtl, (tuple, list, dict)):
-            self.nc.deepcomp(xpmtl, given, msg, invert)
+            nc.deepcomp(self, xpmtl, given, msg, invert)
         else:
             passed, reason = nc.comp(self, xpmtl, given, msg, invert)
             self.results.append(nc.result(self, passed, given, xpmtl, msg, reason))

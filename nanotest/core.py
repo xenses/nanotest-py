@@ -56,11 +56,11 @@ def deepcomp(self, xpmtl, given, msg, invert):
     # just a helper function which resets states, hashes the structs to be compared, then calls _compare()
     self.nodestack = []
     self.xhash = {}
-    hash(xpmtl, self.xhash)
+    hash(self, xpmtl, self.xhash)
     self.nodestack = []
     self.ghash = {}
-    hash(given, self.ghash)
-    compare(msg, invert)
+    hash(self, given, self.ghash)
+    compare(self, msg, invert)
 
 def hash(self, element, hashdict):
     # FIXME see if this can be rewritten without self
@@ -95,12 +95,12 @@ def compare(self, msg, invert):
     if invert:
         # for an inverted test, our only failure condition is equality. a single mismatch is enough to declare
         # success and return.
-        mismatch = self._inv_compare(self.xhash, self.ghash)
+        mismatch = inv_compare(self, self.xhash, self.ghash)
         if not mismatch:
-            mismatch = self._inv_compare(self.ghash, self.xhash)
+            mismatch = inv_compare(self, self.ghash, self.xhash)
         if not mismatch:
-            self.results.append(self._result(False, None, None, msg, "structs were identical"))
-        self.results.append(self._result(True, None, None, msg, None))
+            self.results.append(result(self, False, None, None, msg, "structs were identical"))
+        self.results.append(result(self, True, None, None, msg, None))
         return
 
     # normal compares are more complex.
@@ -117,23 +117,23 @@ def compare(self, msg, invert):
         if key not in self.ghash:
             # key mismatch results in adding a mismatch condition to this test's result. the tests for 'failed'
             # let us know whether we're adding the FIRST mismatch or not. only compares have this tracking
-            result = "node {} (value '{}') only in experimental struct".format(key, self.xhash[key])
+            res = "node {} (value '{}') only in experimental struct".format(key, self.xhash[key])
             if failed:
-                self.results[-1]["comp"].append(self._subresult(None, None, result))
+                self.results[-1]["comp"].append(subresult(None, None, res))
             else:
                 failed = True
                 failkeys.append(key[:-2]) # key mismatch; add (most of) key to failkeys[]
-                self.results.append(self._result(False, None, None, msg, result))
+                self.results.append(result(self, False, None, None, msg, res))
         else:
             # if the key exists in xhash + ghash, call _test_scalar() to see if they are eqivalent
-            passed, reason = self._test_scalar(self.ghash[key], self.xhash[key], None, False)
+            passed, reason = comp(self, self.ghash[key], self.xhash[key], None, False)
             if not passed:
-                result= "node {} values don't match".format(key)
+                res = "node {} values don't match".format(key)
                 if failed:
-                    self.results[-1]["comp"].append(self._subresult(self.ghash[key], self.xhash[key], result))
+                    self.results[-1]["comp"].append(subresult(self.ghash[key], self.xhash[key], res))
                 else:
                     failed = True
-                    self.results.append(self._result(False, self.ghash[key], self.xhash[key], msg, result))
+                    self.results.append(result(self, False, self.ghash[key], self.xhash[key], msg, res))
     # normal compare, step 2: repeat key comparison with ghash as the source. there's no need to check scalars
     # because we've already tested everything which is in both structs.
     failkeys = []
@@ -143,16 +143,16 @@ def compare(self, msg, invert):
             if re.match(fk, key): fkmatch = True
         if fkmatch: continue
         if key not in self.xhash:
-            result = "node {} (value '{}') only in given struct".format(key, self.ghash[key])
+            res = "node {} (value '{}') only in given struct".format(key, self.ghash[key])
             if failed:
-                self.results[-1]["comp"].append(self._subresult(None, None, result))
+                self.results[-1]["comp"].append(subresult(None, None, res))
             else:
                 failed = True
                 failkeys.append(key[:-2])
-                self.results.append(self._result(False, None, None, msg, result))
+                self.results.append(result(self, False, None, None, msg, res))
     # finally, if failed still isn't True, then the compare is a pass
     if not failed:
-        self.results.append(self._result(True, None, None, msg, None))
+        self.results.append(result(self, True, None, None, msg, None))
 
 def inv_compare(self, a, b):
     # FIXME only requires self because comp() needs it
