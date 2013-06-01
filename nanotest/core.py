@@ -1,6 +1,9 @@
 import inspect
 import re
 
+re_re   = re.compile("\:re\:")
+re_type = re.compile("\:ty\:")
+
 # ----------------------------------------------------------- results handling
 
 def result(success, given, xpmtl, msg, *args):
@@ -30,7 +33,7 @@ def subresult(xpmtl, given, reason):
 # ---------------------------------------------------------------- comparisons
 
 def comp(self, xpmtl, given, msg, invert):
-    if self.re_re.match(str(given)):
+    if re_re.match(str(given)):
         return re_match(xpmtl, given, msg, invert)
     else:
         return is_eq(xpmtl, given, msg, invert)

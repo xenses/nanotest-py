@@ -1,5 +1,3 @@
-import re
-
 import nanotest.core as nc
 
 class Nanotester:
@@ -10,8 +8,6 @@ class Nanotester:
         self.nodestack = [] # used to build hash for struct compares
         self.xhash = {}     # experimental struct hash
         self.ghash = {}     # given struct hash
-        self.re_re   = re.compile("\:re\:")
-        self.re_type = re.compile("\:ty\:")
 
     def test(self, xpmtl, given, msg, invert=False):
         """Test two values for equality"""
