@@ -3,7 +3,7 @@ import re
 
 # ----------------------------------------------------------- results handling
 
-def result(self, success, given, xpmtl, msg, *args):
+def result(success, given, xpmtl, msg, *args):
     res = {}
     reason = None
     if len(args) > 0:
@@ -99,8 +99,8 @@ def compare(self, msg, invert):
         if not mismatch:
             mismatch = inv_compare(self, self.ghash, self.xhash)
         if not mismatch:
-            self.results.append(result(self, False, None, None, msg, "structs were identical"))
-        self.results.append(result(self, True, None, None, msg, None))
+            self.results.append(result(False, None, None, msg, "structs were identical"))
+        self.results.append(result(True, None, None, msg, None))
         return
 
     # normal compares are more complex.
@@ -123,7 +123,7 @@ def compare(self, msg, invert):
             else:
                 failed = True
                 failkeys.append(key[:-2]) # key mismatch; add (most of) key to failkeys[]
-                self.results.append(result(self, False, None, None, msg, res))
+                self.results.append(result(False, None, None, msg, res))
         else:
             # if the key exists in xhash + ghash, call _test_scalar() to see if they are eqivalent
             passed, reason = comp(self, self.ghash[key], self.xhash[key], None, False)
@@ -133,7 +133,7 @@ def compare(self, msg, invert):
                     self.results[-1]["comp"].append(subresult(self.ghash[key], self.xhash[key], res))
                 else:
                     failed = True
-                    self.results.append(result(self, False, self.ghash[key], self.xhash[key], msg, res))
+                    self.results.append(result(False, self.ghash[key], self.xhash[key], msg, res))
     # normal compare, step 2: repeat key comparison with ghash as the source. there's no need to check scalars
     # because we've already tested everything which is in both structs.
     failkeys = []
@@ -149,10 +149,10 @@ def compare(self, msg, invert):
             else:
                 failed = True
                 failkeys.append(key[:-2])
-                self.results.append(result(self, False, None, None, msg, res))
+                self.results.append(result(False, None, None, msg, res))
     # finally, if failed still isn't True, then the compare is a pass
     if not failed:
-        self.results.append(result(self, True, None, None, msg, None))
+        self.results.append(result(True, None, None, msg, None))
 
 def inv_compare(self, a, b):
     # FIXME only requires self because comp() needs it

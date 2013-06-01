@@ -16,13 +16,13 @@ class Nanotester:
     def test(self, xpmtl, given, msg, invert=False):
         """Test two values for equality"""
         if type(xpmtl) != type(given):
-            res = nc.result(self, False, type(given), type(xpmtl), msg, "Types don't match")
+            res = nc.result(False, type(given), type(xpmtl), msg, "Types don't match")
             self.results.append(res)
         elif isinstance(xpmtl, (tuple, list, dict)):
             nc.deepcomp(self, xpmtl, given, msg, invert)
         else:
             passed, reason = nc.comp(self, xpmtl, given, msg, invert)
-            self.results.append(nc.result(self, passed, given, xpmtl, msg, reason))
+            self.results.append(nc.result(passed, given, xpmtl, msg, reason))
                 
     def untest(self, xpmtl, given, msg):
         """Test two values for inequality"""
