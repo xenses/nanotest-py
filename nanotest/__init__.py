@@ -1,4 +1,5 @@
 import nanotest.core as nc
+import nanotest.api
 
 class Nanotester:
     """Initialize a nanotest tester object."""
@@ -23,3 +24,12 @@ class Nanotester:
     def untest(self, xpmtl, given, msg):
         """Test two values for inequality"""
         self.test(xpmtl, given, msg, invert=True)
+
+    def source_api(self, filename):
+        pass
+
+    def atest(self, xpmtl):
+        pass
+
+    def auntest(self, xpmtl):
+        pass
