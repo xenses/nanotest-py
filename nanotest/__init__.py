@@ -1,5 +1,5 @@
 import nanotest.core as nc
-import nanotest.api
+import nanotest.api as na
 
 class Nanotester:
     """Initialize a nanotest tester object."""
@@ -26,10 +26,13 @@ class Nanotester:
         self.test(xpmtl, given, msg, invert=True)
 
     def source_api(self, filename):
+        """Source API tests from a given file"""
         pass
 
     def atest(self, xpmtl):
+        """Do an API test for equality"""
         pass
 
     def auntest(self, xpmtl):
+        """Do an API test for inequality"""
         pass
