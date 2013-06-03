@@ -10,7 +10,7 @@ run test suites, and how to write test scripts for it.
 Installation
 ------------
 
-Python 3.2+ is required due to use of the `argparse` module.
+Python 3.2+ or 2.7+ is required due to use of the `argparse` module.
 
 To run nanotest's own tests before installation:
 
@@ -23,28 +23,6 @@ After that, installation is standard:
 
 See `nanotest-py --help` for quick online help on how to run
 tests. Read the tutorial below for more comlpete information.
-
-
-Upgrading from version 1
-------------------------
-
-It seems that Python's distribution tools do not make allowances for
-removing software. Therefore, you should manually remove the old
-`nanotest` executable, which is installed at
-
-```
-/usr/bin/nanotest
-```
-
-You should also uninstall the old nanotest module(s), which will be at
-one or both of these paths:
-
-```
-/usr/lib/python3.2/site-packages/nanotest*
-/usr/lib/python3.3/site-packages/nanotest*
-```
-
-My apologies for this being necessary.
 
 
 Tutorial
@@ -130,9 +108,9 @@ n = nanotest.Nanotester()
 
 The `nanotest` object is called `n` by convention, just as test
 scripts live in directories named `tests/` by convention. If the
-object has a different name, the test harness (`nanotest-py`) will not
-be able to examine the results of the tests, and that script as a
-whole will be treated as a no-op.
+object has a different name, the test harness will not be able to
+examine the results of the tests, and that script as a whole will be
+treated as a no-op.
 
 Individual tests in are simply calls to `n.test()` (to test for
 equality) or `n.untest()` (to test for inequality). This makes it easy

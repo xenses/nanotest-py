@@ -27,12 +27,14 @@ class Nanotester:
 
     def source_api(self, filename):
         """Source API tests from a given file"""
-        pass
+        na.source(self, filename)
 
-    def atest(self, xpmtl):
+    def atest(self, xpmtl, invert=False):
         """Do an API test for equality"""
+        # in the end:
+        # self.test(xpmtl, given, msg, invert)        
         pass
 
     def auntest(self, xpmtl):
         """Do an API test for inequality"""
-        pass
+        self.atest(self, xpmtl, invert=True)
