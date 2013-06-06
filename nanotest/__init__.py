@@ -1,5 +1,5 @@
 import nanotest.core as nc
-import nanotest.api as na
+import nanotest.injection as ni
 
 class Nanotester:
     """Initialize a nanotest tester object."""
@@ -9,6 +9,7 @@ class Nanotester:
         self.nodestack = [] # used to build hash for struct compares
         self.xhash = {}     # experimental struct hash
         self.ghash = {}     # given struct hash
+        self.injt = None
 
     def test(self, xpmtl, given, msg, invert=False):
         """Test two values for equality"""
@@ -27,14 +28,14 @@ class Nanotester:
 
     def source_api(self, filename):
         """Source API tests from a given file"""
-        na.source(self, filename)
+        ni.source(self, filename)
 
-    def atest(self, xpmtl, invert=False):
+    def itest(self, xpmtl, invert=False):
         """Do an API test for equality"""
         # in the end:
         # self.test(xpmtl, given, msg, invert)        
         pass
 
-    def auntest(self, xpmtl):
+    def unitest(self, xpmtl):
         """Do an API test for inequality"""
         self.atest(self, xpmtl, invert=True)
