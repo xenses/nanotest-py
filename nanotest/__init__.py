@@ -10,6 +10,7 @@ class Nanotester:
         self.xhash = {}     # experimental struct hash
         self.ghash = {}     # given struct hash
         self.injt = None
+        self.injf = None
 
     def test(self, xpmtl, given, msg, invert=False):
         """Test two values for equality"""
@@ -30,12 +31,17 @@ class Nanotester:
         """Source API tests from a given file"""
         ni.source(self, filename)
 
-    def itest(self, xpmtl, invert=False):
-        """Do an API test for equality"""
+    def itest(self, testname, xpmtl, invert=False):
+        """Run an injected test for equality"""
+        # handle failures
+        if not testname in self.injt:
+            res = nc.result(False, None, xpmtl, "Injected test {} not found".format(testname), file=self.injf)
+            self.results.append(res)
+            return
         # in the end:
-        # self.test(xpmtl, given, msg, invert)        
+        # self.test(xpmtl, given, msg, invert)
         pass
 
-    def unitest(self, xpmtl):
-        """Do an API test for inequality"""
-        self.atest(self, xpmtl, invert=True)
+    def unitest(self, testname, xpmtl):
+        """Run an injected test for inequality"""
+        self.itest(testname, xpmtl, invert=True)

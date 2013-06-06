@@ -6,16 +6,18 @@ re_type = re.compile("\:ty\:")
 
 # ----------------------------------------------------------- results handling
 
-def result(success, given, xpmtl, msg, *args):
+def result(success, given, xpmtl, msg, *args, **kwargs):
     res = {}
     reason = None
     if len(args) > 0:
         reason = args[0]
-    # get filename, line num, stuff. should always want the -2nd frame in the stack, since -1 is the exec(). this 
-    # may need to be cased when test injection is implemented
+    # get filename, line num, stuff. should always want the -2nd frame in the stack, since -1 is the exec().
     frame = inspect.getouterframes(inspect.currentframe())[-2]
     # frame, filename, linenum, function_name, lines, index
-    res["file"]  = frame[1]
+    if "file" in kwargs:
+        res["file"]  = kwargs["file"]
+    else:
+        res["file"]  = frame[1]
     res["line"]  = frame[2]
     res["pass"]  = success
     res["msg"]  = msg

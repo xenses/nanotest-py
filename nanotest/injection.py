@@ -2,6 +2,8 @@ import json
 import nanotest.core as nc
 
 def source (obj, filename):
+    obj.intf = filename
+    obj.injt = None
     try:
         src = open(filename, "r")
     except Exception as err:
@@ -14,9 +16,8 @@ def source (obj, filename):
         msg = "could not unmarshal JSON: {}".format(err)
         obj.results.append({'run': False, 'msg': msg, 'file': filename, 'tests': None})
         return
-    if type(injt) != "dict":
+    if type(injt) != dict:
         msg = "Injected test data should be dict; is {}".format(type(injt))
         obj.results.append({'run': False, 'msg': msg, 'file': filename, 'tests': None})
         return
     obj.injt = injt
-

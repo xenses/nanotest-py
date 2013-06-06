@@ -1,0 +1,3 @@
+{ "test1": ["foobar",   "generic"],
+  "test2": [42,         "the answer"],
+  "test3": [":re:foo$", "why not a regex?"] }
