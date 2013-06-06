@@ -26,7 +26,7 @@ class Nanotester:
         """Test two values for inequality"""
         self.test(xpmtl, given, msg, invert=True)
 
-    def source_api(self, filename):
+    def inject(self, filename):
         """Source API tests from a given file"""
         ni.source(self, filename)
 
