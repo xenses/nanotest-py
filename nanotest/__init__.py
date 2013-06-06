@@ -38,9 +38,7 @@ class Nanotester:
             res = nc.result(False, None, xpmtl, "Injected test {} not found".format(testname), file=self.injf)
             self.results.append(res)
             return
-        # in the end:
-        # self.test(xpmtl, given, msg, invert)
-        pass
+        self.test(xpmtl, self.injt[testname][0], testname[1], invert)
 
     def unitest(self, testname, xpmtl):
         """Run an injected test for inequality"""

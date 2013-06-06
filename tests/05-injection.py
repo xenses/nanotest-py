@@ -26,4 +26,10 @@ n.test(n2.results[-1]["pass"], False, "top struct isn't a dict")
 n.test(n2.results[-1]["msg"], ":re:Injected test \w+? not found", "there is no 'test99'")
 
 # let's go for a spin
-#n.inject("./tests/corpus/05-injection-base.json")
+n.inject("./tests/corpus/05-injection-base.json")
+n.itest("test1", "foobar")
+n.itest("test2", 47 - 5)
+n.itest("test3", "barfoo")
+n.unitest("test1", "quux")
+n.unitest("test2", 1009)
+n.unitest("test3", "foobar")
