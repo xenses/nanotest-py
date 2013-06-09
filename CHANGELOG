@@ -1,5 +1,14 @@
 nanotest-py Changelog
 
+2.1.0	06 Jun 2013
+
+	Test injection added (new methods: inject, itest, unitest)
+
+	Test runner (nanotest-py) version decoupled from library
+	(nanotest) version
+
+	Code cleanups
+
 2.0.2	09 Jan 2013
 
 	Bugfix: Previous bugfix was wrong-headed. Prepending '.' to
