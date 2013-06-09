@@ -10,9 +10,6 @@ run test suites, and how to write test scripts for it.
 Installation
 ------------
 
-_If you are still using v1.x of nanotest, please remove it by hand. I
-apologize for the inconvenience._
-
 Python 3.2+ or 2.7+ is required due to use of the `argparse` module.
 
 To run nanotest's own tests before installation:

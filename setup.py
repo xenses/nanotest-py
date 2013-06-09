@@ -1,14 +1,22 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import os
+
+if os.path.isfile("/usr/lib/python3.3/site-packages/nanotest.py"):
+    os.remove("/usr/lib/python3.3/site-packages/nanotest.py")
+elif os.path.isfile("/usr/lib/python3.2/site-packages/nanotest.py"):
+    os.remove("/usr/lib/python3.2/site-packages/nanotest.py")
+elif os.path.isfile("/usr/lib/python2.7/site-packages/nanotest.py"):
+    os.remove("/usr/lib/python2.7/site-packages/nanotest.py")
 
 setup( name = "nanotest",
-       version = "2.0.2",
+       version = "2.1.0",
        description = "Tiny testing toolkit (for Python)",
        author = "Shawn Boyette",
        author_email = "shawn@firepear.net",
        url = "https://github.com/firepear/nanotest-py",
-       py_modules = ["nanotest"],
+       packages = [ "nanotest" ],
        scripts = ['bin/nanotest-py'],
        classifiers = [
         "Programming Language :: Python",
