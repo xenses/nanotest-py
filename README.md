@@ -1,5 +1,5 @@
-nanotest-py README and Tutorial
-===============================
+nanotest-py README
+==================
 
 Nanotest is a lightweight, easy-to-use software testing
 library. `nanotest-py` is the Python implementation of it.
